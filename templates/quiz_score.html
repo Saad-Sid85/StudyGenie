@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Quiz Result - StudyGenie</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <div class="feature-card">
+
+        <h1>Quiz Completed! 🎉</h1>
+
+        <h2>{{ topic }}</h2>
+
+        <h3>
+            Your Score
+        </h3>
+
+        <p style="font-size: 32px;">
+            <strong>{{ score }} / {{ total }}</strong>
+        </p>
+
+        <p>
+            You answered {{ score }} out of {{ total }}
+            questions correctly.
+        </p>
+
+        <br>
+
+        <a href="{{ url_for('main.quiz') }}">
+            <button type="button">
+                Take Another Quiz
+            </button>
+        </a>
+
+        <br><br>
+
+        <a href="{{ url_for('main.dashboard') }}">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

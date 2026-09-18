@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quiz Generator - StudyGenie</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <header>
+        <h1>StudyGenie</h1>
+
+        <div>
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+        </div>
+    </header>
+
+
+    <main>
+
+        <div class="feature-card">
+
+            <h2>AI Quiz Generator</h2>
+
+            <p>
+                Enter a subject or topic and StudyGenie will generate
+                a quiz for you.
+            </p>
+
+            <form method="POST"
+      action="{{ url_for('main.generate_quiz_route') }}">
+
+                <label for="topic">
+                    Subject / Topic
+                </label>
+
+                <input
+                    type="text"
+                    id="topic"
+                    name="topic"
+                    placeholder="e.g. Data Structures"
+                    required
+                >
+
+                <br><br>
+
+                <label for="num_questions">
+                    Number of Questions
+                </label>
+
+                <select id="num_questions"
+                        name="num_questions">
+
+                    <option value="5">5 Questions</option>
+                    <option value="10">10 Questions</option>
+
+                </select>
+
+                <br><br>
+
+                <button type="submit">
+                    Generate Quiz
+                </button>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

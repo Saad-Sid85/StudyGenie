@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Quiz - StudyGenie</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <header>
+
+        <h1>StudyGenie</h1>
+
+        <div>
+
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <h2>Quiz: {{ topic }}</h2>
+
+        <form method="POST"
+              action="{{ url_for('main.submit_quiz') }}">
+
+            <!-- IMPORTANT: Quiz ID -->
+            <input type="hidden"
+                   name="quiz_id"
+                   value="{{ quiz_id }}">
+
+
+            {% for question in questions %}
+
+            <div class="feature-card">
+
+                <h3>
+                    {{ loop.index }}. {{ question.question }}
+                </h3>
+
+
+                <label>
+
+                    <input
+                        type="radio"
+                        name="question_{{ question.id }}"
+                        value="A"
+                        required
+                    >
+
+                    A. {{ question.option_a }}
+
+                </label>
+
+
+                <br><br>
+
+
+                <label>
+
+                    <input
+                        type="radio"
+                        name="question_{{ question.id }}"
+                        value="B"
+                    >
+
+                    B. {{ question.option_b }}
+
+                </label>
+
+
+                <br><br>
+
+
+                <label>
+
+                    <input
+                        type="radio"
+                        name="question_{{ question.id }}"
+                        value="C"
+                    >
+
+                    C. {{ question.option_c }}
+
+                </label>
+
+
+                <br><br>
+
+
+                <label>
+
+                    <input
+                        type="radio"
+                        name="question_{{ question.id }}"
+                        value="D"
+                    >
+
+                    D. {{ question.option_d }}
+
+                </label>
+
+            </div>
+
+            {% endfor %}
+
+
+            <button type="submit">
+                Submit Quiz
+            </button>
+
+        </form>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

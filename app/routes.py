@@ -2,16 +2,25 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 import bcrypt
 import mysql.connector
 
+from app.ai.quiz_generator import generate_quiz
 from app.database import get_db_connection
 
 
 main = Blueprint("main", __name__)
 
 
+# ============================================================
+# HOME
+# ============================================================
+
 @main.route("/")
 def home():
     return render_template("index.html")
 
+
+# ============================================================
+# REGISTER
+# ============================================================
 
 @main.route("/register", methods=["GET", "POST"])
 def register():
@@ -26,6 +35,7 @@ def register():
         branch = request.form["branch"]
         semester = request.form["semester"]
 
+        # Hash password
         hashed_password = bcrypt.hashpw(
             password.encode("utf-8"),
             bcrypt.gensalt()
@@ -35,6 +45,7 @@ def register():
         cursor = connection.cursor()
 
         try:
+
             query = """
                 INSERT INTO users
                 (name, email, password, college, course, branch, semester)
@@ -55,9 +66,11 @@ def register():
             connection.commit()
 
         except mysql.connector.IntegrityError:
+
             return "Email already registered."
 
         finally:
+
             cursor.close()
             connection.close()
 
@@ -65,6 +78,10 @@ def register():
 
     return render_template("register.html")
 
+
+# ============================================================
+# LOGIN
+# ============================================================
 
 @main.route("/login", methods=["GET", "POST"])
 def login():
@@ -93,6 +110,7 @@ def login():
             password.encode("utf-8"),
             user["password"].encode("utf-8")
         ):
+
             session["user_id"] = user["id"]
             session["user_name"] = user["name"]
 
@@ -102,6 +120,10 @@ def login():
 
     return render_template("login.html")
 
+
+# ============================================================
+# DASHBOARD
+# ============================================================
 
 @main.route("/dashboard")
 def dashboard():
@@ -130,7 +152,9 @@ def dashboard():
     )
 
 
-# ---------------- TASKS ----------------
+# ============================================================
+# TASKS
+# ============================================================
 
 @main.route("/tasks")
 def tasks():
@@ -160,6 +184,10 @@ def tasks():
         tasks=task_list
     )
 
+
+# ============================================================
+# ADD TASK
+# ============================================================
 
 @main.route("/tasks/add", methods=["GET", "POST"])
 def add_task():
@@ -204,6 +232,10 @@ def add_task():
     return render_template("add_task.html")
 
 
+# ============================================================
+# COMPLETE TASK
+# ============================================================
+
 @main.route("/tasks/complete/<int:task_id>")
 def complete_task(task_id):
 
@@ -221,7 +253,10 @@ def complete_task(task_id):
 
     cursor.execute(
         query,
-        (task_id, session["user_id"])
+        (
+            task_id,
+            session["user_id"]
+        )
     )
 
     connection.commit()
@@ -231,6 +266,10 @@ def complete_task(task_id):
 
     return redirect(url_for("main.tasks"))
 
+
+# ============================================================
+# DELETE TASK
+# ============================================================
 
 @main.route("/tasks/delete/<int:task_id>")
 def delete_task(task_id):
@@ -248,7 +287,10 @@ def delete_task(task_id):
 
     cursor.execute(
         query,
-        (task_id, session["user_id"])
+        (
+            task_id,
+            session["user_id"]
+        )
     )
 
     connection.commit()
@@ -259,7 +301,308 @@ def delete_task(task_id):
     return redirect(url_for("main.tasks"))
 
 
-# ---------------- LOGOUT ----------------
+# ============================================================
+# QUIZ PAGE
+# ============================================================
+
+@main.route("/quiz")
+def quiz():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    return render_template("quiz.html")
+
+
+# ============================================================
+# GENERATE QUIZ
+# ============================================================
+
+@main.route("/quiz/generate", methods=["POST"])
+def generate_quiz_route():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    topic = request.form.get("topic", "").strip()
+
+    try:
+        num_questions = int(request.form.get("num_questions", 5))
+    except ValueError:
+        num_questions = 5
+
+    # Basic validation
+    if not topic:
+        return "Please enter a quiz topic."
+
+    if num_questions < 1:
+        num_questions = 1
+
+    if num_questions > 20:
+        num_questions = 20
+
+    try:
+
+        # Ask AI to generate the quiz
+        quiz_data = generate_quiz(
+            topic,
+            num_questions
+        )
+
+        questions = quiz_data["questions"]
+
+        if not questions:
+            return "AI did not generate any questions."
+
+        # ----------------------------------------------------
+        # Save quiz in database
+        # ----------------------------------------------------
+
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        quiz_query = """
+            INSERT INTO quizzes
+            (user_id, topic, total_questions)
+            VALUES (%s, %s, %s)
+        """
+
+        cursor.execute(
+            quiz_query,
+            (
+                session["user_id"],
+                topic,
+                len(questions)
+            )
+        )
+
+        quiz_id = cursor.lastrowid
+
+        # ----------------------------------------------------
+        # Save questions
+        # ----------------------------------------------------
+
+        question_query = """
+            INSERT INTO quiz_questions
+            (
+                quiz_id,
+                question,
+                option_a,
+                option_b,
+                option_c,
+                option_d,
+                correct_answer
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+
+        for question in questions:
+
+            cursor.execute(
+                question_query,
+                (
+                    quiz_id,
+                    question["question"],
+                    question["option_a"],
+                    question["option_b"],
+                    question["option_c"],
+                    question["option_d"],
+                    question["correct_answer"]
+                )
+            )
+
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        # ----------------------------------------------------
+        # Get questions again with database IDs
+        # ----------------------------------------------------
+
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM quiz_questions
+            WHERE quiz_id = %s
+            ORDER BY id ASC
+            """,
+            (quiz_id,)
+        )
+
+        saved_questions = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+
+        # Save current quiz ID in session as a backup
+        session["current_quiz_id"] = quiz_id
+
+        # Show quiz questions
+        return render_template(
+            "quiz_result.html",
+            topic=topic,
+            quiz_id=quiz_id,
+            questions=saved_questions
+        )
+
+    except Exception as e:
+
+        return f"AI Quiz Generation Error: {str(e)}"
+
+
+# ============================================================
+# SUBMIT QUIZ
+# ============================================================
+
+@main.route("/quiz/submit", methods=["POST"])
+def submit_quiz():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    # Get quiz ID from the form
+    quiz_id = request.form.get("quiz_id")
+
+    # Backup: use session quiz ID if form does not contain it
+    if not quiz_id:
+        quiz_id = session.get("current_quiz_id")
+
+    if not quiz_id:
+        return "Quiz ID is missing. Please generate a new quiz and try again."
+
+    # Make sure quiz ID is an integer
+    try:
+        quiz_id = int(quiz_id)
+    except ValueError:
+        return "Invalid Quiz ID."
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        # ----------------------------------------------------
+        # Make sure this quiz belongs to the logged-in user
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM quizzes
+            WHERE id = %s AND user_id = %s
+            """,
+            (
+                quiz_id,
+                session["user_id"]
+            )
+        )
+
+        quiz = cursor.fetchone()
+
+        if not quiz:
+            return "Quiz not found."
+
+        # ----------------------------------------------------
+        # Get questions
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM quiz_questions
+            WHERE quiz_id = %s
+            ORDER BY id ASC
+            """,
+            (quiz_id,)
+        )
+
+        questions = cursor.fetchall()
+
+        if not questions:
+            return "No questions found for this quiz."
+
+        # ----------------------------------------------------
+        # Calculate score
+        # ----------------------------------------------------
+
+        score = 0
+
+        for question in questions:
+
+            field_name = f"question_{question['id']}"
+
+            selected_answer = request.form.get(field_name)
+
+            # Check answer
+            if selected_answer == question["correct_answer"]:
+                score += 1
+
+            # Save student's answer
+            cursor.execute(
+                """
+                INSERT INTO quiz_answers
+                (quiz_id, question_id, selected_answer)
+                VALUES (%s, %s, %s)
+                """,
+                (
+                    quiz_id,
+                    question["id"],
+                    selected_answer
+                )
+            )
+
+        # ----------------------------------------------------
+        # Save final score
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            UPDATE quizzes
+            SET score = %s
+            WHERE id = %s AND user_id = %s
+            """,
+            (
+                score,
+                quiz_id,
+                session["user_id"]
+            )
+        )
+
+        connection.commit()
+
+        # Quiz has been completed
+        session.pop("current_quiz_id", None)
+
+        # ----------------------------------------------------
+        # Show result
+        # ----------------------------------------------------
+
+        return render_template(
+            "quiz_score.html",
+            topic=quiz["topic"],
+            score=score,
+            total=len(questions)
+        )
+
+    except Exception as e:
+
+        connection.rollback()
+
+        return f"Quiz Submission Error: {str(e)}"
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+
+# ============================================================
+# LOGOUT
+# ============================================================
 
 @main.route("/logout")
 def logout():
