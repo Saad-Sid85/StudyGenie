@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.venv/
+
+# Environment variables / secrets
+.env
+
+# Flask
+instance/
+.webassets-cache/
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
