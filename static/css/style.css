@@ -92,6 +92,19 @@ p {
     margin-top: 0;
 }
 
+.feature-card button {
+    margin-top: 10px;
+}
+
+.feature-card a {
+    text-decoration: none;
+}
+
+.feature-card button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 @media (max-width: 600px) {
     .feature-grid {
         grid-template-columns: 1fr;

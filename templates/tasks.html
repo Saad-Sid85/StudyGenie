@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Tasks - StudyGenie</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <header>
+
+        <h1>StudyGenie</h1>
+
+        <div>
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+        </div>
+
+    </header>
+
+    <main>
+
+        <h2>My Tasks</h2>
+
+        <p>
+            <a href="{{ url_for('main.add_task') }}">
+                <button>Add New Task</button>
+            </a>
+        </p>
+
+        {% if tasks %}
+
+            {% for task in tasks %}
+
+            <div class="feature-card">
+
+                <h3>{{ task.title }}</h3>
+
+                <p>
+                    <strong>Subject:</strong>
+                    {{ task.subject or "Not specified" }}
+                </p>
+
+                <p>
+                    <strong>Description:</strong>
+                    {{ task.description or "No description" }}
+                </p>
+
+                <p>
+                    <strong>Due:</strong>
+                    {{ task.due_date }}
+                </p>
+
+                <p>
+                    <strong>Priority:</strong>
+                    {{ task.priority }}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    {{ task.status }}
+                </p>
+
+                {% if task.status == "Pending" %}
+
+                    <a href="{{ url_for('main.complete_task', task_id=task.id) }}">
+                        Mark Complete
+                    </a>
+
+                {% endif %}
+
+                &nbsp; | &nbsp;
+
+                <a href="{{ url_for('main.delete_task', task_id=task.id) }}">
+                    Delete
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="feature-card">
+
+                <p>
+                    No tasks yet. Add your first study task.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

@@ -13,69 +13,121 @@
 
 <body>
 
-    <div class="dashboard-container">
+<div class="dashboard-container">
 
-        <header>
-            <h1>StudyGenie</h1>
+    <header>
+        <h1>StudyGenie</h1>
 
-            <a href="{{ url_for('main.logout') }}">
-                Logout
-            </a>
-        </header>
+        <a href="{{ url_for('main.logout') }}">
+            Logout
+        </a>
+    </header>
 
-        <main>
+    <main>
 
-            <h2>Welcome, {{ user.name }}!</h2>
+        <h2>Welcome, {{ user.name }}!</h2>
 
-            <section class="profile-card">
+        <!-- Student Profile -->
 
-                <h3>Student Profile</h3>
+        <section class="profile-card">
 
-                <p><strong>Email:</strong> {{ user.email }}</p>
+            <h3>Student Profile</h3>
 
-                <p><strong>College:</strong> {{ user.college }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>College:</strong> {{ user.college }}</p>
+            <p><strong>Course:</strong> {{ user.course }}</p>
+            <p><strong>Branch:</strong> {{ user.branch }}</p>
+            <p><strong>Semester:</strong> {{ user.semester }}</p>
 
-                <p><strong>Course:</strong> {{ user.course }}</p>
+        </section>
 
-                <p><strong>Branch:</strong> {{ user.branch }}</p>
 
-                <p><strong>Semester:</strong> {{ user.semester }}</p>
+        <!-- Main Features -->
 
-            </section>
+        <section class="feature-section">
 
-            <section class="feature-section">
+            <h3>StudyGenie Features</h3>
 
-                <h3>StudyGenie Features</h3>
+            <div class="feature-grid">
 
-                <div class="feature-grid">
 
-                    <div class="feature-card">
-                        <h4>AI Assistant</h4>
-                        <p>Ask academic questions and get AI-powered help.</p>
-                    </div>
+                <!-- TASKS -->
 
-                    <div class="feature-card">
-                        <h4>Tasks</h4>
-                        <p>Manage assignments, deadlines and study tasks.</p>
-                    </div>
+                <div class="feature-card">
 
-                    <div class="feature-card">
-                        <h4>Quiz Generator</h4>
-                        <p>Generate quizzes and track your results.</p>
-                    </div>
+                    <h4>📚 My Tasks</h4>
 
-                    <div class="feature-card">
-                        <h4>Study Recommendations</h4>
-                        <p>Get personalized recommendations based on your activity.</p>
-                    </div>
+                    <p>
+                        Manage assignments, deadlines and study tasks.
+                    </p>
+
+                    <a href="{{ url_for('main.tasks') }}">
+                        <button type="button">
+                            Open Tasks
+                        </button>
+                    </a>
 
                 </div>
 
-            </section>
 
-        </main>
+                <!-- AI ASSISTANT -->
 
-    </div>
+                <div class="feature-card">
+
+                    <h4>🤖 AI Assistant</h4>
+
+                    <p>
+                        Ask academic questions and get AI-powered help.
+                    </p>
+
+                    <button type="button" disabled>
+                        Coming Soon
+                    </button>
+
+                </div>
+
+
+                <!-- QUIZ -->
+
+                <div class="feature-card">
+
+                    <h4>📝 Quiz Generator</h4>
+
+                    <p>
+                        Generate quizzes and test your knowledge.
+                    </p>
+
+                    <button type="button" disabled>
+                        Coming Soon
+                    </button>
+
+                </div>
+
+
+                <!-- RECOMMENDATIONS -->
+
+                <div class="feature-card">
+
+                    <h4>💡 Study Recommendations</h4>
+
+                    <p>
+                        Get personalized study recommendations.
+                    </p>
+
+                    <button type="button" disabled>
+                        Coming Soon
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
 
 </body>
 

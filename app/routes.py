@@ -130,6 +130,137 @@ def dashboard():
     )
 
 
+# ---------------- TASKS ----------------
+
+@main.route("/tasks")
+def tasks():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = """
+        SELECT id, title, description, subject,
+               due_date, priority, status
+        FROM tasks
+        WHERE user_id = %s
+        ORDER BY due_date ASC
+    """
+
+    cursor.execute(query, (session["user_id"],))
+    task_list = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+        "tasks.html",
+        tasks=task_list
+    )
+
+
+@main.route("/tasks/add", methods=["GET", "POST"])
+def add_task():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    if request.method == "POST":
+
+        title = request.form["title"]
+        description = request.form["description"]
+        subject = request.form["subject"]
+        due_date = request.form["due_date"]
+        priority = request.form["priority"]
+
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        query = """
+            INSERT INTO tasks
+            (user_id, title, description, subject, due_date, priority)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+
+        values = (
+            session["user_id"],
+            title,
+            description,
+            subject,
+            due_date,
+            priority
+        )
+
+        cursor.execute(query, values)
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        return redirect(url_for("main.tasks"))
+
+    return render_template("add_task.html")
+
+
+@main.route("/tasks/complete/<int:task_id>")
+def complete_task(task_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    query = """
+        UPDATE tasks
+        SET status = 'Completed'
+        WHERE id = %s AND user_id = %s
+    """
+
+    cursor.execute(
+        query,
+        (task_id, session["user_id"])
+    )
+
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+    return redirect(url_for("main.tasks"))
+
+
+@main.route("/tasks/delete/<int:task_id>")
+def delete_task(task_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    query = """
+        DELETE FROM tasks
+        WHERE id = %s AND user_id = %s
+    """
+
+    cursor.execute(
+        query,
+        (task_id, session["user_id"])
+    )
+
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+    return redirect(url_for("main.tasks"))
+
+
+# ---------------- LOGOUT ----------------
+
 @main.route("/logout")
 def logout():
 
