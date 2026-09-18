@@ -55,3 +55,45 @@ p {
     text-align: center;
     margin-top: 20px;
 }
+
+.dashboard-container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto;
+}
+
+.dashboard-container header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.dashboard-container header a {
+    text-decoration: none;
+}
+
+.profile-card,
+.feature-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.feature-card h4 {
+    margin-top: 0;
+}
+
+@media (max-width: 600px) {
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+}

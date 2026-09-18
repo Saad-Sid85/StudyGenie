@@ -7,26 +7,73 @@
 
     <title>Dashboard - StudyGenie</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
-    <div class="auth-container">
+    <div class="dashboard-container">
 
-        <h1>Welcome, {{ name }}!</h1>
+        <header>
+            <h1>StudyGenie</h1>
 
-        <p>
-            You are successfully logged in to StudyGenie.
-        </p>
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+        </header>
 
-        <p>
-            Your AI-powered student dashboard will be built here.
-        </p>
+        <main>
 
-        <a href="{{ url_for('main.logout') }}">
-            <button>Logout</button>
-        </a>
+            <h2>Welcome, {{ user.name }}!</h2>
+
+            <section class="profile-card">
+
+                <h3>Student Profile</h3>
+
+                <p><strong>Email:</strong> {{ user.email }}</p>
+
+                <p><strong>College:</strong> {{ user.college }}</p>
+
+                <p><strong>Course:</strong> {{ user.course }}</p>
+
+                <p><strong>Branch:</strong> {{ user.branch }}</p>
+
+                <p><strong>Semester:</strong> {{ user.semester }}</p>
+
+            </section>
+
+            <section class="feature-section">
+
+                <h3>StudyGenie Features</h3>
+
+                <div class="feature-grid">
+
+                    <div class="feature-card">
+                        <h4>AI Assistant</h4>
+                        <p>Ask academic questions and get AI-powered help.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>Tasks</h4>
+                        <p>Manage assignments, deadlines and study tasks.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>Quiz Generator</h4>
+                        <p>Generate quizzes and track your results.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>Study Recommendations</h4>
+                        <p>Get personalized recommendations based on your activity.</p>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
 
     </div>
 
