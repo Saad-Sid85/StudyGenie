@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Progress - StudyGenie</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <header>
+
+        <h1>StudyGenie</h1>
+
+        <div>
+
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <h2>📊 Student Progress</h2>
+
+        <p>
+            Track your tasks and quiz performance in one place.
+        </p>
+
+
+        <!-- TASK STATISTICS -->
+
+        <div class="feature-card">
+
+            <h3>📋 Task Progress</h3>
+
+            <p>
+                <strong>Total Tasks:</strong>
+                {{ total_tasks }}
+            </p>
+
+            <p>
+                <strong>Completed:</strong>
+                {{ completed_tasks }}
+            </p>
+
+            <p>
+                <strong>Pending:</strong>
+                {{ pending_tasks }}
+            </p>
+
+        </div>
+
+
+        <!-- QUIZ STATISTICS -->
+
+        <div class="feature-card">
+
+            <h3>📝 Quiz Performance</h3>
+
+            <p>
+                <strong>Quizzes Taken:</strong>
+                {{ quizzes_taken }}
+            </p>
+
+            <p>
+                <strong>Average Score:</strong>
+                {{ average_score }}%
+            </p>
+
+        </div>
+
+
+        <!-- TOPIC PERFORMANCE -->
+
+        <div class="feature-card">
+
+            <h3>📚 Topic-wise Performance</h3>
+
+            {% if topic_performance %}
+
+                {% for topic in topic_performance %}
+
+                <div style="margin-bottom: 15px;">
+
+                    <p>
+
+                        <strong>
+                            {{ topic.topic }}
+                        </strong>
+
+                        —
+
+                        {{ topic.average_score }}%
+
+                        <br>
+
+                        <small>
+                            Attempts: {{ topic.attempts }}
+                        </small>
+
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>
+                    No completed quizzes available yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- RECENT QUIZZES -->
+
+        <div class="feature-card">
+
+            <h3>📈 Recent Quiz Performance</h3>
+
+            {% if recent_quizzes %}
+
+                {% for quiz in recent_quizzes %}
+
+                <p>
+
+                    <strong>
+                        {{ quiz.topic }}
+                    </strong>
+
+                    —
+
+                    {{ quiz.score }}/{{ quiz.total_questions }}
+
+                    {% if quiz.total_questions > 0 %}
+
+                        (
+                        {{
+                            ((quiz.score / quiz.total_questions) * 100)
+                            | round(1)
+                        }}%
+                        )
+
+                    {% endif %}
+
+                </p>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>
+                    No quiz results available yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <br>
+
+
+        <a href="{{ url_for('main.dashboard') }}">
+
+            <button type="button">
+                Back to Dashboard
+            </button>
+
+        </a>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

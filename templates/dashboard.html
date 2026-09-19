@@ -105,6 +105,67 @@
 
             </div>
 
+
+            <!-- SMART AUTOMATION ALERTS -->
+
+            <div class="feature-card">
+
+                <h3>🤖 Smart Alerts</h3>
+
+                {% if dashboard_alerts %}
+
+                {% for alert in dashboard_alerts %}
+
+                <div style="margin-bottom: 15px;">
+
+                    <h4>
+
+                        {% if alert.level == "high" %}
+                        🔴
+                        {% elif alert.level == "medium" %}
+                        🟠
+                        {% else %}
+                        🟢
+                        {% endif %}
+
+                        {{ alert.title }}
+
+                    </h4>
+
+                    <p>
+                        {{ alert.message }}
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+                <a href="{{ url_for('main.automation') }}">
+
+                    <button type="button">
+                        View All Alerts
+                    </button>
+
+                </a>
+
+                {% else %}
+
+                <p>
+                    ✅ No important alerts right now.
+                </p>
+
+                <a href="{{ url_for('main.automation') }}">
+
+                    <button type="button">
+                        Check Smart Alerts
+                    </button>
+
+                </a>
+
+                {% endif %}
+
+            </div>
+
             <!-- UPCOMING TASKS -->
 
             <div class="feature-card">
@@ -150,8 +211,7 @@
 
             </div>
 
-            <!-- RECENT QUIZ PERFORMANCE -->
-
+            
             <!-- RECENT QUIZ PERFORMANCE -->
 
             <div class="feature-card">
@@ -282,6 +342,7 @@
                         </a>
 
                     </div>
+
                     <!-- QUIZ -->
 
                     <div class="feature-card">
@@ -322,6 +383,9 @@
 
                     </div>
 
+
+                    <!-- Smart Automation -->
+
                     <div class="feature-card">
 
                         <h3>🤖 Smart Automation</h3>
@@ -335,6 +399,26 @@
 
                             <button type="button">
                                 View Smart Alerts
+                            </button>
+
+                        </a>
+
+                    </div>
+
+                    <!-- Student Progress -->
+
+                    <div class="feature-card">
+
+                        <h3>📊 Student Progress</h3>
+
+                        <p>
+                            View your task completion and quiz performance.
+                        </p>
+
+                        <a href="{{ url_for('main.progress') }}">
+
+                            <button type="button">
+                                View Progress
                             </button>
 
                         </a>

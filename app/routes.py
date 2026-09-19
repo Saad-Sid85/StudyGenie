@@ -289,11 +289,13 @@ def dashboard():
         )
 
         recent_quizzes = cursor.fetchall()
-
+        
         # ----------------------------------------------------
         # Generate AI recommendation preview
         # ----------------------------------------------------
+
         try:
+
             recommendation_data = generate_recommendations(
                 user,
                 upcoming_tasks,
@@ -311,29 +313,54 @@ def dashboard():
             )
 
         except Exception:
+
             recommendation_preview = (
                 "Complete your pending tasks and review your recent quiz performance."
             )
 
             recommendation_priorities = []
 
-    finally:
 
+        # ----------------------------------------------------
+        # Generate Smart Automation Alerts
+        # ----------------------------------------------------
+
+        try:
+
+            from app.ai.automation import generate_automation_alerts
+
+            automation_data = generate_automation_alerts(
+                user,
+                upcoming_tasks,
+                recent_quizzes
+            )
+
+            dashboard_alerts = automation_data.get(
+                "alerts",
+                []
+            )
+
+        except Exception:
+
+            dashboard_alerts = []
+
+        return render_template(
+            "dashboard.html",
+            user=user,
+            pending_tasks=pending_tasks,
+            upcoming_tasks=upcoming_tasks,
+            upcoming_deadlines=upcoming_deadlines,
+            quizzes_taken=quizzes_taken,
+            average_score=average_score,
+            recent_quizzes=recent_quizzes,
+            recommendation_preview=recommendation_preview,
+            recommendation_priorities=recommendation_priorities,
+            dashboard_alerts=dashboard_alerts
+        )
+
+    finally:
         cursor.close()
         connection.close()
-
-    return render_template(
-        "dashboard.html",
-        user=user,
-        pending_tasks=pending_tasks,
-        upcoming_deadlines=upcoming_deadlines,
-        quizzes_taken=quizzes_taken,
-        average_score=average_score,
-        upcoming_tasks=upcoming_tasks,
-        recent_quizzes=recent_quizzes,
-        recommendation_preview=recommendation_preview,
-        recommendation_priorities=recommendation_priorities
-    )
 
 
 # ============================================================
@@ -1398,4 +1425,171 @@ def automation():
     return render_template(
         "automation.html",
         alerts=alerts
+    )
+    
+    
+    # ============================================================
+# STUDENT PROGRESS ANALYTICS
+# ============================================================
+
+@main.route("/progress")
+def progress():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        # ----------------------------------------------------
+        # Task statistics
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS total_tasks
+            FROM tasks
+            WHERE user_id = %s
+            """,
+            (session["user_id"],)
+        )
+
+        total_tasks = cursor.fetchone()["total_tasks"]
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS completed_tasks
+            FROM tasks
+            WHERE user_id = %s
+              AND status = 'Completed'
+            """,
+            (session["user_id"],)
+        )
+
+        completed_tasks = cursor.fetchone()["completed_tasks"]
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS pending_tasks
+            FROM tasks
+            WHERE user_id = %s
+              AND status = 'Pending'
+            """,
+            (session["user_id"],)
+        )
+
+        pending_tasks = cursor.fetchone()["pending_tasks"]
+
+
+        # ----------------------------------------------------
+        # Quiz statistics
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS quizzes_taken
+            FROM quizzes
+            WHERE user_id = %s
+              AND score IS NOT NULL
+            """,
+            (session["user_id"],)
+        )
+
+        quizzes_taken = cursor.fetchone()["quizzes_taken"]
+
+
+        cursor.execute(
+            """
+            SELECT
+                COALESCE(
+                    ROUND(
+                        AVG(
+                            CASE
+                                WHEN total_questions > 0
+                                THEN (score / total_questions) * 100
+                            END
+                        ),
+                        1
+                    ),
+                    0
+                ) AS average_score
+            FROM quizzes
+            WHERE user_id = %s
+              AND score IS NOT NULL
+            """,
+            (session["user_id"],)
+        )
+
+        average_score = cursor.fetchone()["average_score"]
+
+
+        # ----------------------------------------------------
+        # Topic-wise quiz performance
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                topic,
+                COUNT(*) AS attempts,
+                ROUND(
+                    AVG(
+                        CASE
+                            WHEN total_questions > 0
+                            THEN (score / total_questions) * 100
+                        END
+                    ),
+                    1
+                ) AS average_score
+            FROM quizzes
+            WHERE user_id = %s
+              AND score IS NOT NULL
+            GROUP BY topic
+            ORDER BY average_score DESC
+            """,
+            (session["user_id"],)
+        )
+
+        topic_performance = cursor.fetchall()
+
+
+        # ----------------------------------------------------
+        # Recent quiz performance
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                topic,
+                score,
+                total_questions,
+                created_at
+            FROM quizzes
+            WHERE user_id = %s
+              AND score IS NOT NULL
+            ORDER BY created_at DESC
+            LIMIT 10
+            """,
+            (session["user_id"],)
+        )
+
+        recent_quizzes = cursor.fetchall()
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+
+    return render_template(
+        "progress.html",
+        total_tasks=total_tasks,
+        completed_tasks=completed_tasks,
+        pending_tasks=pending_tasks,
+        quizzes_taken=quizzes_taken,
+        average_score=average_score,
+        topic_performance=topic_performance,
+        recent_quizzes=recent_quizzes
     )
