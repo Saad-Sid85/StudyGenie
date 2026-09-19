@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Study Notes - StudyGenie</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+    <header>
+
+        <h1>StudyGenie</h1>
+
+        <div>
+
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <h2>📚 My Study Notes</h2>
+
+        <p>
+            Upload your study PDFs and ask AI questions
+            based on your notes.
+        </p>
+
+
+        <a href="{{ url_for('main.upload_note') }}">
+
+            <button type="button">
+                + Upload PDF
+            </button>
+
+        </a>
+
+
+        <br><br>
+
+
+        {% if notes %}
+
+            {% for note in notes %}
+
+            <div class="feature-card">
+
+                <h3>
+                    📄 {{ note.title }}
+                </h3>
+
+                <p>
+                    File: {{ note.filename }}
+                </p>
+
+                <p>
+                    Uploaded: {{ note.created_at }}
+                </p>
+
+              <a href="{{ url_for('main.view_note', note_id=note.id) }}">
+
+    <button type="button">
+        Open Notes
+    </button>
+
+</a>
+
+<a href="{{ url_for('main.delete_note', note_id=note.id) }}"
+   onclick="return confirm('Are you sure you want to delete this note?');">
+
+    <button type="button">
+        Delete
+    </button>
+
+</a>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="feature-card">
+
+                <h3>No notes uploaded yet.</h3>
+
+                <p>
+                    Upload your first PDF to start studying with AI.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

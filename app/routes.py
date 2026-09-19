@@ -1,10 +1,23 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session
+)
+
+import os
 import bcrypt
 import mysql.connector
+
+from pypdf import PdfReader
 
 from app.ai.quiz_generator import generate_quiz
 from app.ai.assistant import ask_ai
 from app.ai.recommendations import generate_recommendations
+from app.ai.notes_ai import ask_about_notes
+from app.ai.pdf_extractor import extract_text_from_pdf
 from app.database import get_db_connection
 
 
@@ -258,10 +271,10 @@ def dashboard():
         # ----------------------------------------------------
         # Recent quiz performance
         # ----------------------------------------------------
-
         cursor.execute(
             """
             SELECT
+                id,
                 topic,
                 score,
                 total_questions,
@@ -277,12 +290,10 @@ def dashboard():
 
         recent_quizzes = cursor.fetchall()
 
-                # ----------------------------------------------------
+        # ----------------------------------------------------
         # Generate AI recommendation preview
         # ----------------------------------------------------
-
         try:
-
             recommendation_data = generate_recommendations(
                 user,
                 upcoming_tasks,
@@ -300,7 +311,6 @@ def dashboard():
             )
 
         except Exception:
-
             recommendation_preview = (
                 "Complete your pending tasks and review your recent quiz performance."
             )
@@ -775,6 +785,41 @@ def submit_quiz():
 
 
 # ============================================================
+# DELETE QUIZ
+# ============================================================
+
+@main.route("/quiz/delete/<int:quiz_id>")
+def delete_quiz(quiz_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            """
+            DELETE FROM quizzes
+            WHERE id = %s
+              AND user_id = %s
+            """,
+            (
+                quiz_id,
+                session["user_id"]
+            )
+        )
+
+        connection.commit()
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return redirect(url_for("main.dashboard"))
+
+
+# ============================================================
 # LOGOUT
 # ============================================================
 
@@ -958,3 +1003,283 @@ def recommendations():
     except Exception as e:
 
         return f"AI Recommendation Error: {str(e)}"
+
+    # ============================================================
+# STUDY NOTES
+# ============================================================
+
+@main.route("/notes")
+def notes():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                title,
+                filename,
+                created_at
+            FROM notes
+            WHERE user_id = %s
+            ORDER BY created_at DESC
+            """,
+            (session["user_id"],)
+        )
+
+        notes_list = cursor.fetchall()
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+    return render_template(
+        "notes.html",
+        notes=notes_list
+    )
+
+
+@main.route("/notes/upload", methods=["GET", "POST"])
+def upload_note():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    if request.method == "POST":
+
+        title = request.form.get("title", "").strip()
+        pdf_file = request.files.get("pdf_file")
+
+        if not title:
+            return render_template(
+                "upload_note.html",
+                error="Please enter a note title."
+            )
+
+        if not pdf_file or pdf_file.filename == "":
+            return render_template(
+                "upload_note.html",
+                error="Please select a PDF file."
+            )
+
+        if not pdf_file.filename.lower().endswith(".pdf"):
+            return render_template(
+                "upload_note.html",
+                error="Only PDF files are supported."
+            )
+
+        try:
+            extracted_text = extract_text_from_pdf(pdf_file)
+
+            if not extracted_text:
+                return render_template(
+                    "upload_note.html",
+                    error="Could not extract text from this PDF, even with OCR."
+                )
+
+            connection = get_db_connection()
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """
+                INSERT INTO notes
+                (
+                    user_id,
+                    title,
+                    filename,
+                    content
+                )
+                VALUES (%s, %s, %s, %s)
+                """,
+                (
+                    session["user_id"],
+                    title,
+                    pdf_file.filename,
+                    extracted_text
+                )
+            )
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+            return redirect(url_for("main.notes"))
+
+        except Exception as e:
+
+            return render_template(
+                "upload_note.html",
+                error=f"PDF Upload Error: {str(e)}"
+            )
+
+    return render_template(
+        "upload_note.html",
+        error=None
+    )
+
+
+@main.route("/notes/<int:note_id>")
+def view_note(note_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                title,
+                filename,
+                content,
+                created_at
+            FROM notes
+            WHERE id = %s
+              AND user_id = %s
+            """,
+            (
+                note_id,
+                session["user_id"]
+            )
+        )
+
+        note = cursor.fetchone()
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+    if not note:
+        return "Note not found."
+
+    return render_template(
+        "view_note.html",
+        note=note,
+        answer=None,
+        question=""
+    )
+
+
+# ============================================================
+# DELETE STUDY NOTE
+# ============================================================
+
+@main.route("/notes/delete/<int:note_id>")
+def delete_note(note_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+
+        cursor.execute(
+            """
+            DELETE FROM notes
+            WHERE id = %s
+              AND user_id = %s
+            """,
+            (
+                note_id,
+                session["user_id"]
+            )
+        )
+
+        connection.commit()
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+    return redirect(url_for("main.notes"))
+
+@main.route(
+    "/notes/<int:note_id>/ask",
+    methods=["POST"]
+)
+def ask_note_question(note_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    question = request.form.get(
+        "question",
+        ""
+    ).strip()
+
+    if not question:
+        return "Please enter a question."
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                title,
+                filename,
+                content,
+                created_at
+            FROM notes
+            WHERE id = %s
+              AND user_id = %s
+            """,
+            (
+                note_id,
+                session["user_id"]
+            )
+        )
+
+        note = cursor.fetchone()
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+    if not note:
+        return "Note not found."
+
+    try:
+
+        answer = ask_about_notes(
+            question,
+            note["content"]
+        )
+
+    except Exception as e:
+
+        return render_template(
+            "view_note.html",
+            note=note,
+            answer=None,
+            question=question,
+            error=f"AI Notes Error: {str(e)}"
+        )
+
+    return render_template(
+        "view_note.html",
+        note=note,
+        answer=answer,
+        question=question,
+        error=None
+    )

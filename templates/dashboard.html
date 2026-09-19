@@ -40,168 +40,184 @@
 
             </section>
 
-<!-- DASHBOARD STATISTICS -->
+            <!-- DASHBOARD STATISTICS -->
 
-<div class="dashboard-stats">
+            <div class="dashboard-stats">
 
-    <div class="feature-card">
-        <h4>📋 Pending Tasks</h4>
-        <h2>{{ pending_tasks }}</h2>
-    </div>
+                <div class="feature-card">
+                    <h4>📋 Pending Tasks</h4>
+                    <h2>{{ pending_tasks }}</h2>
+                </div>
 
-    <div class="feature-card">
-        <h4>⏰ Upcoming Deadlines</h4>
-        <h2>{{ upcoming_deadlines }}</h2>
-        <p>Next 7 days</p>
-    </div>
+                <div class="feature-card">
+                    <h4>⏰ Upcoming Deadlines</h4>
+                    <h2>{{ upcoming_deadlines }}</h2>
+                    <p>Next 7 days</p>
+                </div>
 
-    <div class="feature-card">
-        <h4>📝 Quizzes Taken</h4>
-        <h2>{{ quizzes_taken }}</h2>
-    </div>
+                <div class="feature-card">
+                    <h4>📝 Quizzes Taken</h4>
+                    <h2>{{ quizzes_taken }}</h2>
+                </div>
 
-    <div class="feature-card">
-        <h4>📊 Average Quiz Score</h4>
-        <h2>{{ average_score }}%</h2>
-    </div>
+                <div class="feature-card">
+                    <h4>📊 Average Quiz Score</h4>
+                    <h2>{{ average_score }}%</h2>
+                </div>
 
-</div>
+            </div>
 
-<!-- AI RECOMMENDATION PREVIEW -->
+            <!-- AI RECOMMENDATION PREVIEW -->
 
-<div class="feature-card ai-recommendation-card">
+            <div class="feature-card ai-recommendation-card">
 
-    <h3>🧠 StudyGenie Recommendation</h3>
+                <h3>🧠 StudyGenie Recommendation</h3>
 
-    <p>
-        {{ recommendation_preview }}
-    </p>
+                <p>
+                    {{ recommendation_preview }}
+                </p>
 
-    {% if recommendation_priorities %}
+                {% if recommendation_priorities %}
 
-        <h4>Today's Focus</h4>
+                <h4>Today's Focus</h4>
 
-        <ul>
+                <ul>
 
-            {% for priority in recommendation_priorities[:3] %}
+                    {% for priority in recommendation_priorities[:3] %}
 
-            <li>
-                {{ priority }}
-            </li>
+                    <li>
+                        {{ priority }}
+                    </li>
 
-            {% endfor %}
+                    {% endfor %}
 
-        </ul>
+                </ul>
 
-    {% endif %}
-
-    <br>
-
-    <a href="{{ url_for('main.recommendations') }}">
-        <button type="button">
-            View Full Recommendations
-        </button>
-    </a>
-
-</div>
-
-<!-- UPCOMING TASKS -->
-
-<div class="feature-card">
-
-    <h3>📅 Upcoming Tasks</h3>
-
-    {% if upcoming_tasks %}
-
-        <ul>
-
-            {% for task in upcoming_tasks %}
-
-            <li>
-
-                <strong>{{ task.title }}</strong>
-
-                {% if task.subject %}
-                    — {{ task.subject }}
                 {% endif %}
 
-                | Due: {{ task.due_date }}
-                | Priority: {{ task.priority }}
+                <br>
 
-            </li>
+                <a href="{{ url_for('main.recommendations') }}">
+                    <button type="button">
+                        View Full Recommendations
+                    </button>
+                </a>
 
-            {% endfor %}
+            </div>
 
-        </ul>
+            <!-- UPCOMING TASKS -->
 
-    {% else %}
+            <div class="feature-card">
 
-        <p>
-            🎉 No pending tasks. You're all caught up!
-        </p>
+                <h3>📅 Upcoming Tasks</h3>
 
-    {% endif %}
+                {% if upcoming_tasks %}
 
-    <br>
+                <ul>
 
-    <a href="{{ url_for('main.tasks') }}">
-        <button type="button">View All Tasks</button>
-    </a>
+                    {% for task in upcoming_tasks %}
 
-</div>
+                    <li>
 
-<!-- RECENT QUIZ PERFORMANCE -->
+                        <strong>{{ task.title }}</strong>
 
-<div class="feature-card">
+                        {% if task.subject %}
+                        — {{ task.subject }}
+                        {% endif %}
 
-    <h3>📝 Recent Quiz Performance</h3>
+                        | Due: {{ task.due_date }}
+                        | Priority: {{ task.priority }}
 
-    {% if recent_quizzes %}
+                    </li>
 
-        <ul>
+                    {% endfor %}
 
-            {% for quiz in recent_quizzes %}
+                </ul>
 
-            <li>
+                {% else %}
 
-                <strong>{{ quiz.topic }}</strong>
+                <p>
+                    🎉 No pending tasks. You're all caught up!
+                </p>
 
-                —
+                {% endif %}
 
-                {{ quiz.score }}/{{ quiz.total_questions }}
+                <br>
 
-                {% if quiz.total_questions > 0 %}
+                <a href="{{ url_for('main.tasks') }}">
+                    <button type="button">View All Tasks</button>
+                </a>
 
-                    (
-                    {{
+            </div>
+
+            <!-- RECENT QUIZ PERFORMANCE -->
+
+            <!-- RECENT QUIZ PERFORMANCE -->
+
+            <div class="feature-card">
+
+                <h3>📝 Recent Quiz Performance</h3>
+
+                {% if recent_quizzes %}
+
+                {% for quiz in recent_quizzes %}
+
+                <div style="margin-bottom: 20px;">
+
+                    <p>
+
+                        <strong>
+                            {{ quiz.topic }}
+                        </strong>
+
+                        —
+
+                        {{ quiz.score }}/{{ quiz.total_questions }}
+
+                        {% if quiz.total_questions > 0 %}
+
+                        (
+                        {{
                         ((quiz.score / quiz.total_questions) * 100)
                         | round(1)
-                    }}%
-                    )
+                        }}%
+                        )
+
+                        {% endif %}
+
+                    </p>
+
+                    <a href="{{ url_for('main.delete_quiz', quiz_id=quiz.id) }}"
+                        onclick="return confirm('Are you sure you want to delete this quiz result?');">
+
+                        <button type="button">
+                            Delete
+                        </button>
+
+                    </a>
+
+                </div>
+
+                {% endfor %}
+
+                {% else %}
+
+                <p>
+                    You haven't completed any quizzes yet.
+                </p>
+
+                <a href="{{ url_for('main.quiz') }}">
+
+                    <button type="button">
+                        Take Your First Quiz
+                    </button>
+
+                </a>
 
                 {% endif %}
 
-            </li>
+            </div>
 
-            {% endfor %}
-
-        </ul>
-
-    {% else %}
-
-        <p>
-            You haven't completed any quizzes yet.
-        </p>
-
-        <a href="{{ url_for('main.quiz') }}">
-            <button type="button">
-                Take Your First Quiz
-            </button>
-        </a>
-
-    {% endif %}
-
-</div>
             <!-- Main Features -->
 
             <section class="feature-section">
@@ -248,6 +264,24 @@
 
                     </div>
 
+                    <div class="feature-card">
+
+                        <h4>📚 Study Notes</h4>
+
+                        <p>
+                            Upload PDFs and ask AI questions directly
+                            from your study material.
+                        </p>
+
+                        <a href="{{ url_for('main.notes') }}">
+
+                            <button type="button">
+                                Open Study Notes
+                            </button>
+
+                        </a>
+
+                    </div>
                     <!-- QUIZ -->
 
                     <div class="feature-card">

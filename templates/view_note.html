@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{{ note.title }} - StudyGenie</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+    <header>
+
+        <h1>StudyGenie</h1>
+
+        <div>
+
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.notes') }}">
+                My Notes
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <h2>📖 {{ note.title }}</h2>
+
+        <p>
+            {{ note.filename }}
+        </p>
+
+
+        <!-- ASK AI -->
+
+        <div class="feature-card">
+
+            <h3>🤖 Ask AI About These Notes</h3>
+
+            <form
+                method="POST"
+                action="{{ url_for('main.ask_note_question', note_id=note.id) }}"
+            >
+
+                <textarea
+                    name="question"
+                    rows="5"
+                    placeholder="Example: Explain normalization from these notes..."
+                    required
+                >{{ question }}</textarea>
+
+                <br><br>
+
+                <button type="submit">
+                    Ask StudyGenie
+                </button>
+
+            </form>
+
+        </div>
+
+
+        {% if error %}
+
+        <div class="feature-card">
+
+            <h3>Something went wrong</h3>
+
+            <p>{{ error }}</p>
+
+        </div>
+
+        {% endif %}
+
+
+        {% if answer %}
+
+        <div class="feature-card">
+
+            <h3>🤖 StudyGenie's Answer</h3>
+
+            <div style="white-space: pre-wrap;">
+                {{ answer }}
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- NOTE CONTENT -->
+
+        <div class="feature-card">
+
+            <h3>📄 Extracted Notes</h3>
+
+            <div style="
+                white-space: pre-wrap;
+                max-height: 600px;
+                overflow-y: auto;
+            ">
+                {{ note.content }}
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
