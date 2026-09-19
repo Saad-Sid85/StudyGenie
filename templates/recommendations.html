@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Study Recommendations - StudyGenie</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- HEADER -->
+
+    <header>
+
+        <h1>StudyGenie</h1>
+
+        <div>
+
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <h2>🧠 AI Study Recommendations</h2>
+
+        <p>
+            StudyGenie analyzes your tasks and quiz performance
+            to suggest what you should focus on.
+        </p>
+
+
+        <!-- SUMMARY -->
+
+        <div class="feature-card">
+
+            <h3>📊 Academic Summary</h3>
+
+            <p>
+                {{ recommendations.summary }}
+            </p>
+
+        </div>
+
+
+        <!-- PRIORITIES -->
+
+        <div class="feature-card">
+
+            <h3>🔥 Your Priorities</h3>
+
+            <ul>
+
+                {% for priority in recommendations.priorities %}
+
+                <li>
+                    {{ priority }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+
+        <!-- WEAK TOPICS -->
+
+        <div class="feature-card">
+
+            <h3>📖 Topics Needing Attention</h3>
+
+            {% if recommendations.weak_topics %}
+
+                <ul>
+
+                    {% for topic in recommendations.weak_topics %}
+
+                    <li>
+                        {{ topic }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <p>
+                    No weak topics identified from your quiz history.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- STRONG TOPICS -->
+
+        <div class="feature-card">
+
+            <h3>💪 Strong Topics</h3>
+
+            {% if recommendations.strong_topics %}
+
+                <ul>
+
+                    {% for topic in recommendations.strong_topics %}
+
+                    <li>
+                        {{ topic }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <p>
+                    Not enough quiz data to identify strong topics yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- STUDY PLAN -->
+
+        <div class="feature-card">
+
+            <h3>📅 Recommended Study Plan</h3>
+
+            <ul>
+
+                {% for day in recommendations.study_plan %}
+
+                <li>
+                    {{ day }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+
+        <br>
+
+        <a href="{{ url_for('main.recommendations') }}">
+
+            <button type="button">
+                Refresh Recommendations
+            </button>
+
+        </a>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

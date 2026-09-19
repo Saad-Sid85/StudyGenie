@@ -7,129 +7,134 @@
 
     <title>Dashboard - StudyGenie</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
-<div class="dashboard-container">
+    <div class="dashboard-container">
 
-    <header>
-        <h1>StudyGenie</h1>
+        <header>
+            <h1>StudyGenie</h1>
 
-        <a href="{{ url_for('main.logout') }}">
-            Logout
-        </a>
-    </header>
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+        </header>
 
-    <main>
+        <main>
 
-        <h2>Welcome, {{ user.name }}!</h2>
+            <h2>Welcome, {{ user.name }}!</h2>
 
-        <!-- Student Profile -->
+            <!-- Student Profile -->
 
-        <section class="profile-card">
+            <section class="profile-card">
 
-            <h3>Student Profile</h3>
+                <h3>Student Profile</h3>
 
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>College:</strong> {{ user.college }}</p>
-            <p><strong>Course:</strong> {{ user.course }}</p>
-            <p><strong>Branch:</strong> {{ user.branch }}</p>
-            <p><strong>Semester:</strong> {{ user.semester }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>College:</strong> {{ user.college }}</p>
+                <p><strong>Course:</strong> {{ user.course }}</p>
+                <p><strong>Branch:</strong> {{ user.branch }}</p>
+                <p><strong>Semester:</strong> {{ user.semester }}</p>
 
-        </section>
-
-
-        <!-- Main Features -->
-
-        <section class="feature-section">
-
-            <h3>StudyGenie Features</h3>
-
-            <div class="feature-grid">
+            </section>
 
 
-                <!-- TASKS -->
+            <!-- Main Features -->
 
-                <div class="feature-card">
+            <section class="feature-section">
 
-                    <h4>📚 My Tasks</h4>
+                <h3>StudyGenie Features</h3>
 
-                    <p>
-                        Manage assignments, deadlines and study tasks.
-                    </p>
+                <div class="feature-grid">
 
-                    <a href="{{ url_for('main.tasks') }}">
-                        <button type="button">
-                            Open Tasks
-                        </button>
-                    </a>
+
+                    <!-- TASKS -->
+
+                    <div class="feature-card">
+
+                        <h4>📚 My Tasks</h4>
+
+                        <p>
+                            Manage assignments, deadlines and study tasks.
+                        </p>
+
+                        <a href="{{ url_for('main.tasks') }}">
+                            <button type="button">
+                                Open Tasks
+                            </button>
+                        </a>
+
+                    </div>
+
+
+                    <!-- AI ASSISTANT -->
+
+                    <div class="feature-card">
+
+                        <h4>🤖 AI Assistant</h4>
+
+                        <p>
+                            Ask questions and get AI-powered academic help.
+                        </p>
+
+                        <a href="{{ url_for('main.assistant') }}">
+                            <button type="button">
+                                Open AI Assistant
+                            </button>
+                        </a>
+
+                    </div>
+
+                    <!-- QUIZ -->
+
+                    <div class="feature-card">
+
+                        <h4>📝 Quiz Generator</h4>
+
+                        <p>
+                            Generate quizzes and test your knowledge.
+                        </p>
+
+                        <a href="{{ url_for('main.quiz') }}">
+                            <button type="button">
+                                Create Quiz
+                            </button>
+                        </a>
+
+                    </div>
+
+
+                    <!-- RECOMMENDATIONS -->
+
+                    <div class="feature-card">
+
+                        <h4>🧠 Study Recommendations</h4>
+
+                        <p>
+                            Get AI-powered recommendations based on
+                            your tasks and quiz performance.
+                        </p>
+
+                        <a href="{{ url_for('main.recommendations') }}">
+
+                            <button type="button">
+                                View Recommendations
+                            </button>
+
+                        </a>
+
+                    </div>
+
 
                 </div>
 
+            </section>
 
-                <!-- AI ASSISTANT -->
+        </main>
 
-                <div class="feature-card">
-
-                    <h4>🤖 AI Assistant</h4>
-
-                    <p>
-                        Ask academic questions and get AI-powered help.
-                    </p>
-
-                    <button type="button" disabled>
-                        Coming Soon
-                    </button>
-
-                </div>
-
-
-                <!-- QUIZ -->
-
-                <div class="feature-card">
-
-    <h4>📝 Quiz Generator</h4>
-
-    <p>
-        Generate quizzes and test your knowledge.
-    </p>
-
-    <a href="{{ url_for('main.quiz') }}">
-        <button type="button">
-            Create Quiz
-        </button>
-    </a>
-
-</div>
-
-
-                <!-- RECOMMENDATIONS -->
-
-                <div class="feature-card">
-
-                    <h4>💡 Study Recommendations</h4>
-
-                    <p>
-                        Get personalized study recommendations.
-                    </p>
-
-                    <button type="button" disabled>
-                        Coming Soon
-                    </button>
-
-                </div>
-
-
-            </div>
-
-        </section>
-
-    </main>
-
-</div>
+    </div>
 
 </body>
 

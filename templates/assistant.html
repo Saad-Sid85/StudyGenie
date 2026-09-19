@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Assistant - StudyGenie</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- HEADER -->
+
+    <header>
+
+        <h1>StudyGenie</h1>
+
+        <div>
+
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main>
+
+        <h2>🤖 AI Student Assistant</h2>
+
+        <p>
+            Ask StudyGenie anything about your studies,
+            programming, assignments or exam preparation.
+        </p>
+
+
+        <!-- QUESTION FORM -->
+
+        <div class="feature-card">
+
+            <form method="POST"
+                  action="{{ url_for('main.assistant') }}">
+
+                <label for="question">
+                    <strong>Your Question</strong>
+                </label>
+
+                <br><br>
+
+                <textarea
+                    id="question"
+                    name="question"
+                    rows="6"
+                    placeholder="Example: Explain normalization in DBMS with an example..."
+                    required
+                >{{ question }}</textarea>
+
+                <br><br>
+
+                <button type="submit">
+                    Ask StudyGenie
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        {% if error %}
+
+        <div class="feature-card">
+
+            <h3>Something went wrong</h3>
+
+            <p>
+                {{ error }}
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- AI ANSWER -->
+
+        {% if answer %}
+
+        <div class="feature-card">
+
+            <h3>🤖 StudyGenie's Answer</h3>
+
+            <div style="white-space: pre-wrap;">
+                {{ answer }}
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

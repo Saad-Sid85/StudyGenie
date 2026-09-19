@@ -3,6 +3,8 @@ import bcrypt
 import mysql.connector
 
 from app.ai.quiz_generator import generate_quiz
+from app.ai.assistant import ask_ai
+from app.ai.recommendations import generate_recommendations
 from app.database import get_db_connection
 
 
@@ -610,3 +612,177 @@ def logout():
     session.clear()
 
     return redirect(url_for("main.login"))
+
+# ============================================================
+# AI ASSISTANT
+# ============================================================
+
+@main.route("/assistant", methods=["GET", "POST"])
+def assistant():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    answer = None
+    question = ""
+
+    # --------------------------------------------------------
+    # Ask AI
+    # --------------------------------------------------------
+
+    if request.method == "POST":
+
+        question = request.form.get("question", "").strip()
+
+        if not question:
+            return render_template(
+                "assistant.html",
+                answer=None,
+                question="",
+                error="Please enter a question."
+            )
+
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute(
+            """
+            SELECT college, course, branch, semester
+            FROM users
+            WHERE id = %s
+            """,
+            (session["user_id"],)
+        )
+
+        student = cursor.fetchone()
+
+        cursor.close()
+        connection.close()
+
+        try:
+
+            answer = ask_ai(
+                question,
+                student
+            )
+
+        except Exception as e:
+
+            return render_template(
+                "assistant.html",
+                answer=None,
+                question=question,
+                error=f"AI Assistant Error: {str(e)}"
+            )
+
+    return render_template(
+        "assistant.html",
+        answer=answer,
+        question=question,
+        error=None
+    )
+
+# ============================================================
+# AI STUDY RECOMMENDATIONS
+# ============================================================
+
+@main.route("/recommendations")
+def recommendations():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        # ----------------------------------------------------
+        # Get student information
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT college, course, branch, semester
+            FROM users
+            WHERE id = %s
+            """,
+            (session["user_id"],)
+        )
+
+        student = cursor.fetchone()
+
+        if not student:
+            return "Student information not found."
+
+        # ----------------------------------------------------
+        # Get pending tasks
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                title,
+                description,
+                subject,
+                due_date,
+                priority,
+                status
+            FROM tasks
+            WHERE user_id = %s
+              AND status = 'Pending'
+            ORDER BY due_date ASC
+            """,
+            (session["user_id"],)
+        )
+
+        tasks = cursor.fetchall()
+
+        # ----------------------------------------------------
+        # Get quiz history
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                topic,
+                score,
+                total_questions,
+                created_at
+            FROM quizzes
+            WHERE user_id = %s
+              AND score IS NOT NULL
+            ORDER BY created_at DESC
+            LIMIT 20
+            """,
+            (session["user_id"],)
+        )
+
+        quizzes = cursor.fetchall()
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+    # --------------------------------------------------------
+    # Generate AI recommendations
+    # --------------------------------------------------------
+
+    try:
+
+        recommendations_data = generate_recommendations(
+            student,
+            tasks,
+            quizzes
+        )
+
+        return render_template(
+            "recommendations.html",
+            recommendations=recommendations_data
+        )
+
+    except Exception as e:
+
+        return f"AI Recommendation Error: {str(e)}"
