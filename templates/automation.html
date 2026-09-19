@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Alerts - StudyGenie</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <header>
+
+        <h1>StudyGenie</h1>
+
+        <div>
+
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('main.logout') }}">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <h2>🤖 Smart Automation & Alerts</h2>
+
+        <p>
+            StudyGenie automatically analyzes your tasks
+            and quiz performance to provide useful alerts.
+        </p>
+
+
+        {% if alerts %}
+
+            {% for alert in alerts %}
+
+            <div class="feature-card">
+
+                <h3>
+
+                    {% if alert.level == "high" %}
+                        🔴
+                    {% elif alert.level == "medium" %}
+                        🟠
+                    {% else %}
+                        🟢
+                    {% endif %}
+
+                    {{ alert.title }}
+
+                </h3>
+
+                <p>
+                    {{ alert.message }}
+                </p>
+
+                <small>
+                    Type: {{ alert.type }}
+                    |
+                    Priority: {{ alert.level }}
+                </small>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="feature-card">
+
+                <h3>✅ No alerts right now</h3>
+
+                <p>
+                    You're currently on track.
+                    Keep completing your tasks and
+                    practicing your quizzes.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+
+        <br>
+
+
+        <a href="{{ url_for('main.dashboard') }}">
+
+            <button type="button">
+                Back to Dashboard
+            </button>
+
+        </a>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

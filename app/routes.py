@@ -1283,3 +1283,119 @@ def ask_note_question(note_id):
         question=question,
         error=None
     )
+    
+    # ============================================================
+# SMART AUTOMATION & ALERTS
+# ============================================================
+
+@main.route("/automation")
+def automation():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        # ----------------------------------------------------
+        # Get student information
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                college,
+                course,
+                branch,
+                semester
+            FROM users
+            WHERE id = %s
+            """,
+            (session["user_id"],)
+        )
+
+        student = cursor.fetchone()
+
+        if not student:
+            return "Student information not found."
+
+        # ----------------------------------------------------
+        # Get pending tasks
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                title,
+                description,
+                subject,
+                due_date,
+                priority,
+                status
+            FROM tasks
+            WHERE user_id = %s
+              AND status = 'Pending'
+            ORDER BY due_date ASC
+            """,
+            (session["user_id"],)
+        )
+
+        tasks = cursor.fetchall()
+
+        # ----------------------------------------------------
+        # Get quiz history
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                topic,
+                score,
+                total_questions,
+                created_at
+            FROM quizzes
+            WHERE user_id = %s
+              AND score IS NOT NULL
+            ORDER BY created_at DESC
+            LIMIT 20
+            """,
+            (session["user_id"],)
+        )
+
+        quizzes = cursor.fetchall()
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+    # --------------------------------------------------------
+    # Generate smart alerts using AI
+    # --------------------------------------------------------
+
+    try:
+
+        from app.ai.automation import generate_automation_alerts
+
+        automation_data = generate_automation_alerts(
+            student,
+            tasks,
+            quizzes
+        )
+
+        alerts = automation_data.get(
+            "alerts",
+            []
+        )
+
+    except Exception as e:
+
+        return f"Automation Error: {str(e)}"
+
+    return render_template(
+        "automation.html",
+        alerts=alerts
+    )
