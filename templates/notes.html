@@ -2,121 +2,197 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Study Notes - StudyGenie</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
-
 
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <header>
+    <!-- Navbar -->
+    <nav class="app-navbar">
 
-        <h1>StudyGenie</h1>
+        <a href="{{ url_for('main.dashboard') }}" class="app-brand">
 
-        <div>
+            <div class="brand-mark">S</div>
+
+            <div>
+                <div class="brand-name">StudyGenie</div>
+                <div class="brand-subtitle">Student Assistant</div>
+            </div>
+
+        </a>
+
+        <div class="nav-links">
 
             <a href="{{ url_for('main.dashboard') }}">
                 Dashboard
             </a>
 
-            &nbsp; | &nbsp;
+            <a href="{{ url_for('main.tasks') }}">
+                Tasks
+            </a>
 
-            <a href="{{ url_for('main.logout') }}">
+            <a href="{{ url_for('main.quiz') }}">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}" class="active">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}" class="nav-logout">
                 Logout
             </a>
 
         </div>
 
-    </header>
+    </nav>
 
 
-    <main>
+    <!-- Main Content -->
+    <main class="page-container">
 
-        <h2>📚 My Study Notes</h2>
+        <div class="notes-page">
 
-        <p>
-            Upload your study PDFs and ask AI questions
-            based on your notes.
-        </p>
+            <div class="page-header">
 
+                <div>
 
-        <a href="{{ url_for('main.upload_note') }}">
+                    <span class="page-eyebrow">
+                        STUDY MATERIAL
+                    </span>
 
-            <button type="button">
-                + Upload PDF
-            </button>
+                    <h1>My Study Notes</h1>
 
-        </a>
+                    <p>
+                        Upload your study PDFs and ask AI questions
+                        based on your notes.
+                    </p>
 
+                </div>
 
-        <br><br>
-
-
-        {% if notes %}
-
-            {% for note in notes %}
-
-            <div class="feature-card">
-
-                <h3>
-                    📄 {{ note.title }}
-                </h3>
-
-                <p>
-                    File: {{ note.filename }}
-                </p>
-
-                <p>
-                    Uploaded: {{ note.created_at }}
-                </p>
-
-              <a href="{{ url_for('main.view_note', note_id=note.id) }}">
-
-    <button type="button">
-        Open Notes
-    </button>
-
-</a>
-
-<a href="{{ url_for('main.delete_note', note_id=note.id) }}"
-   onclick="return confirm('Are you sure you want to delete this note?');">
-
-    <button type="button">
-        Delete
-    </button>
-
-</a>
+                <a href="{{ url_for('main.upload_note') }}"
+                   class="primary-button">
+                    + Upload PDF
+                </a>
 
             </div>
 
-            {% endfor %}
 
-        {% else %}
+            {% if notes %}
 
-            <div class="feature-card">
+            <div class="notes-grid">
 
-                <h3>No notes uploaded yet.</h3>
+                {% for note in notes %}
 
-                <p>
-                    Upload your first PDF to start studying with AI.
-                </p>
+                <div class="note-card">
+
+                    <div class="note-card-top">
+
+                        <div class="note-file-icon">
+                            PDF
+                        </div>
+
+                        <div class="note-card-heading">
+
+                            <h3>
+                                {{ note.title }}
+                            </h3>
+
+                            <span>
+                                {{ note.filename }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="note-card-meta">
+
+                        <div class="note-meta-item">
+
+                            <span class="meta-label">
+                                Uploaded
+                            </span>
+
+                            <strong>
+                                {{ note.created_at }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="note-card-actions">
+
+                        <a href="{{ url_for('main.view_note', note_id=note.id) }}"
+                           class="primary-button">
+                            Open Notes
+                        </a>
+
+                        <a href="{{ url_for('main.delete_note', note_id=note.id) }}"
+                           class="delete-button"
+                           onclick="return confirm('Are you sure you want to delete this note?');">
+                            Delete
+                        </a>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
 
             </div>
 
-        {% endif %}
+            {% else %}
+
+            <div class="empty-state notes-empty-state">
+
+                <div class="empty-icon">
+                    PDF
+                </div>
+
+                <h2>No notes uploaded yet</h2>
+
+                <p>
+                    Upload your first study PDF and start
+                    learning with StudyGenie AI.
+                </p>
+
+                <a href="{{ url_for('main.upload_note') }}"
+                   class="primary-button">
+                    + Upload Your First PDF
+                </a>
+
+            </div>
+
+            {% endif %}
+
+        </div>
 
     </main>
+
+
+    <footer class="app-footer">
+
+        <p>
+            StudyGenie · Your AI-powered student assistant
+        </p>
+
+    </footer>
 
 </div>
 

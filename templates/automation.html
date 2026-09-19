@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -20,104 +19,278 @@
 
 </head>
 
+
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <header>
 
-        <h1>StudyGenie</h1>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
-        <div>
+    <nav class="app-navbar">
+
+        <a
+            href="{{ url_for('main.dashboard') }}"
+            class="app-brand"
+        >
+
+            <div class="brand-mark">
+                S
+            </div>
+
+            <div>
+
+                <div class="brand-name">
+                    StudyGenie
+                </div>
+
+                <div class="brand-subtitle">
+                    Student Assistant
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <div class="nav-links">
 
             <a href="{{ url_for('main.dashboard') }}">
                 Dashboard
             </a>
 
-            &nbsp; | &nbsp;
+            <a href="{{ url_for('main.tasks') }}">
+                Tasks
+            </a>
 
-            <a href="{{ url_for('main.logout') }}">
+            <a href="{{ url_for('main.quiz') }}">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a
+                href="{{ url_for('main.logout') }}"
+                class="nav-logout"
+            >
                 Logout
             </a>
 
         </div>
 
-    </header>
+    </nav>
 
 
-    <main>
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
 
-        <h2>🤖 Smart Automation & Alerts</h2>
+    <main class="page-container">
 
-        <p>
-            StudyGenie automatically analyzes your tasks
-            and quiz performance to provide useful alerts.
-        </p>
+        <div class="automation-page">
 
 
-        {% if alerts %}
+            <!-- PAGE HEADER -->
 
-            {% for alert in alerts %}
+            <div class="page-header">
 
-            <div class="feature-card">
+                <div>
 
-                <h3>
+                    <span class="page-eyebrow">
+                        SMART AUTOMATION
+                    </span>
 
-                    {% if alert.level == "high" %}
-                        🔴
-                    {% elif alert.level == "medium" %}
-                        🟠
+                    <h1>
+                        Smart Alerts
+                    </h1>
+
+                    <p>
+                        StudyGenie automatically analyzes your tasks
+                        and quiz performance to highlight things that
+                        may need your attention.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 ALERTS
+            ========================== -->
+
+            {% if alerts %}
+
+            <div class="automation-alert-list">
+
+                {% for alert in alerts %}
+
+                <div class="automation-alert
+                    {% if alert.level == 'high' %}
+                        alert-high
+                    {% elif alert.level == 'medium' %}
+                        alert-medium
                     {% else %}
-                        🟢
+                        alert-low
                     {% endif %}
+                ">
 
-                    {{ alert.title }}
+                    <!-- ALERT ICON -->
 
-                </h3>
+                    <div class="automation-alert-icon">
 
-                <p>
-                    {{ alert.message }}
-                </p>
+                        {% if alert.level == "high" %}
+                            !
+                        {% elif alert.level == "medium" %}
+                            ~
+                        {% else %}
+                            ✓
+                        {% endif %}
 
-                <small>
-                    Type: {{ alert.type }}
-                    |
-                    Priority: {{ alert.level }}
-                </small>
+                    </div>
+
+
+                    <!-- ALERT CONTENT -->
+
+                    <div class="automation-alert-content">
+
+                        <div class="automation-alert-top">
+
+                            <div>
+
+                                <span class="automation-alert-type">
+                                    {{ alert.type }}
+                                </span>
+
+                                <h2>
+                                    {{ alert.title }}
+                                </h2>
+
+                            </div>
+
+
+                            <span class="automation-level
+                                {% if alert.level == 'high' %}
+                                    automation-level-high
+                                {% elif alert.level == 'medium' %}
+                                    automation-level-medium
+                                {% else %}
+                                    automation-level-low
+                                {% endif %}
+                            ">
+                                {{ alert.level }}
+                            </span>
+
+                        </div>
+
+
+                        <p>
+                            {{ alert.message }}
+                        </p>
+
+
+                        <div class="automation-alert-footer">
+
+                            <span>
+                                Alert type:
+                                <strong>{{ alert.type }}</strong>
+                            </span>
+
+                            <span>
+                                Priority:
+                                <strong>{{ alert.level }}</strong>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
 
             </div>
 
-            {% endfor %}
 
-        {% else %}
+            {% else %}
 
-            <div class="feature-card">
 
-                <h3>✅ No alerts right now</h3>
+            <!-- =========================
+                 NO ALERTS
+            ========================== -->
+
+            <div class="automation-empty-state">
+
+                <div class="automation-empty-icon">
+                    ✓
+                </div>
+
+                <span class="page-eyebrow">
+                    ALL CLEAR
+                </span>
+
+                <h2>
+                    No alerts right now
+                </h2>
 
                 <p>
-                    You're currently on track.
-                    Keep completing your tasks and
-                    practicing your quizzes.
+                    You're currently on track. Keep completing
+                    your tasks and practicing your quizzes.
                 </p>
 
             </div>
 
-        {% endif %}
+            {% endif %}
 
 
-        <br>
+            <!-- =========================
+                 BOTTOM ACTIONS
+            ========================== -->
+
+            <div class="automation-actions">
+
+                <a
+                    href="{{ url_for('main.dashboard') }}"
+                    class="secondary-button"
+                >
+                    ← Back to Dashboard
+                </a>
+
+                <a
+                    href="{{ url_for('main.automation') }}"
+                    class="primary-button"
+                >
+                    ↻ Refresh Alerts
+                </a>
+
+            </div>
 
 
-        <a href="{{ url_for('main.dashboard') }}">
-
-            <button type="button">
-                Back to Dashboard
-            </button>
-
-        </a>
+        </div>
 
     </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="app-footer">
+
+        <p>
+            StudyGenie · Your AI-powered student assistant
+        </p>
+
+    </footer>
+
 
 </div>
 

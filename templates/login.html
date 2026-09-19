@@ -5,44 +5,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login - StudyGenie</title>
+    <title>Login | StudyGenie</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-<body>
+<body class="auth-page">
 
-    <div class="auth-container">
+    <!-- ========================= -->
+    <!-- AUTH NAVBAR -->
+    <!-- ========================= -->
 
-        <h1>StudyGenie</h1>
-        <h2>Login</h2>
+    <header class="navbar">
 
-        <form method="POST">
+        <div class="navbar-container">
 
-            <input
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                required
-            >
+            <a href="{{ url_for('main.home') }}" class="brand">
+                <span class="brand-icon">S</span>
+                <span>StudyGenie</span>
+            </a>
 
-            <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                required
-            >
+            <a href="{{ url_for('main.register') }}" class="auth-nav-link">
+                New to StudyGenie?
+                <span>Register</span>
+            </a>
 
-            <button type="submit">Login</button>
+        </div>
 
-        </form>
+    </header>
+
+
+    <!-- ========================= -->
+    <!-- LOGIN -->
+    <!-- ========================= -->
+
+    <main class="auth-main">
+
+        <div class="auth-card auth-card-login">
+
+            <div class="auth-header">
+
+                <div class="auth-icon">
+                    S
+                </div>
+
+                <span class="section-label">
+                    WELCOME BACK
+                </span>
+
+                <h1>
+                    Welcome back
+                </h1>
+
+                <p>
+                    Sign in to continue managing your studies
+                    with StudyGenie.
+                </p>
+
+            </div>
+
+
+            <form method="POST" class="auth-form">
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                </div>
+
+
+                <button type="submit" class="btn btn-primary auth-submit">
+                    Login
+                    <span>→</span>
+                </button>
+
+            </form>
+
+
+            <div class="auth-footer">
+
+                <p>
+                    Don't have an account?
+                    <a href="{{ url_for('main.register') }}">
+                        Create one
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <footer class="auth-page-footer">
 
         <p>
-            Don't have an account?
-            <a href="{{ url_for('main.register') }}">Register</a>
+            © 2026 StudyGenie. Built for students.
         </p>
 
-    </div>
+    </footer>
 
 </body>
 

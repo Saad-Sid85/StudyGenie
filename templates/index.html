@@ -1,19 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>StudyGenie</title>
+    <title>StudyGenie | AI-Powered Student Assistant</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 
-<body>
 
-    <h1>StudyGenie</h1>
+<body class="landing-page">
 
-    <p>Your AI-powered student assistant.</p>
+    <!-- ========================= -->
+    <!-- NAVBAR -->
+    <!-- ========================= -->
 
-    <button>Get Started</button>
+    <header class="navbar">
+
+        <div class="navbar-container">
+
+            <a href="{{ url_for('main.home') }}" class="brand"></a>
+                <span class="brand-icon">S</span>
+                <span>StudyGenie</span>
+            </a>
+
+
+            <nav class="nav-links">
+
+                <a href="#features">
+                    Features
+                </a>
+
+                <a href="{{ url_for('main.login') }}">
+                    Login
+                </a>
+
+                <a href="{{ url_for('main.register') }}" class="nav-register">
+                    Register
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================= -->
+    <!-- HERO SECTION -->
+    <!-- ========================= -->
+
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <div class="hero-badge">
+                    <span>✦</span>
+                    AI-powered learning companion
+                </div>
+
+
+                <h1>
+                    Study smarter.
+                    <span>Stay organized.</span>
+                    Learn better.
+                </h1>
+
+
+                <p class="hero-description">
+                    StudyGenie brings your academic tasks, notes, quizzes,
+                    progress and AI assistance together in one simple
+                    student-focused platform.
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <a href="{{ url_for('main.register') }}" class="btn btn-primary">
+                        Get Started
+                        <span>→</span>
+                    </a>
+
+                    <a href="#features" class="btn btn-secondary">
+                        Explore Features
+                    </a>
+
+                </div>
+
+
+                <p class="hero-note">
+                    Built to make everyday studying simpler.
+                </p>
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- HERO PREVIEW -->
+            <!-- ========================= -->
+
+            <div class="hero-preview">
+
+                <div class="preview-window">
+
+                    <div class="preview-header">
+
+                        <div class="preview-brand">
+                            <span class="preview-logo">S</span>
+                            StudyGenie
+                        </div>
+
+                        <div class="preview-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="preview-body">
+
+                        <p class="preview-greeting">
+                            Good morning 👋
+                        </p>
+
+                        <h3>
+                            Here's your study overview
+                        </h3>
+
+
+                        <div class="preview-stats">
+
+                            <div class="preview-stat">
+
+                                <span class="preview-stat-icon">
+                                    ✓
+                                </span>
+
+                                <div>
+                                    <strong>8</strong>
+                                    <small>Tasks</small>
+                                </div>
+
+                            </div>
+
+
+                            <div class="preview-stat">
+
+                                <span class="preview-stat-icon">
+                                    ✦
+                                </span>
+
+                                <div>
+                                    <strong>5</strong>
+                                    <small>Quizzes</small>
+                                </div>
+
+                            </div>
+
+
+                            <div class="preview-stat">
+
+                                <span class="preview-stat-icon">
+                                    ↗
+                                </span>
+
+                                <div>
+                                    <strong>74%</strong>
+                                    <small>Average</small>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="preview-card">
+
+                            <div class="preview-card-title">
+                                <span>✦</span>
+                                Smart Study Insight
+                            </div>
+
+                            <p>
+                                Focus on your upcoming tasks and revise
+                                topics where your quiz scores are lower.
+                            </p>
+
+                        </div>
+
+
+                        <div class="preview-progress">
+
+                            <div class="preview-progress-header">
+
+                                <span>
+                                    Study progress
+                                </span>
+
+                                <strong>
+                                    74%
+                                </strong>
+
+                            </div>
+
+                            <div class="progress-track">
+                                <div class="progress-fill"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ========================= -->
+        <!-- FEATURES -->
+        <!-- ========================= -->
+
+        <section id="features" class="features-section">
+
+            <div class="section-heading">
+
+                <span class="section-label">
+                    STUDYGENIE FEATURES
+                </span>
+
+                <h2>
+                    Everything you need to
+                    <span>study smarter.</span>
+                </h2>
+
+                <p>
+                    One simple platform for managing your academic
+                    work and getting help when you need it.
+                </p>
+
+            </div>
+
+
+            <div class="features-grid">
+
+
+                <!-- AI ASSISTANT -->
+
+                <div class="feature-item">
+
+                    <div class="feature-icon">
+                        ✦
+                    </div>
+
+                    <h3>
+                        AI Academic Assistant
+                    </h3>
+
+                    <p>
+                        Ask questions, understand difficult concepts
+                        and get study guidance from your AI assistant.
+                    </p>
+
+                </div>
+
+
+                <!-- QUIZZES -->
+
+                <div class="feature-item">
+
+                    <div class="feature-icon">
+                        ?
+                    </div>
+
+                    <h3>
+                        AI Quiz Generator
+                    </h3>
+
+                    <p>
+                        Generate topic-based quizzes and instantly
+                        evaluate your understanding.
+                    </p>
+
+                </div>
+
+
+                <!-- NOTES -->
+
+                <div class="feature-item">
+
+                    <div class="feature-icon">
+                        ▤
+                    </div>
+
+                    <h3>
+                        Smart Notes
+                    </h3>
+
+                    <p>
+                        Upload your study material and ask questions
+                        directly from your notes.
+                    </p>
+
+                </div>
+
+
+                <!-- TASKS -->
+
+                <div class="feature-item">
+
+                    <div class="feature-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Task Management
+                    </h3>
+
+                    <p>
+                        Keep track of assignments, deadlines and
+                        important academic tasks.
+                    </p>
+
+                </div>
+
+
+                <!-- PROGRESS -->
+
+                <div class="feature-item">
+
+                    <div class="feature-icon">
+                        ↗
+                    </div>
+
+                    <h3>
+                        Progress Tracking
+                    </h3>
+
+                    <p>
+                        Monitor your task completion and quiz
+                        performance over time.
+                    </p>
+
+                </div>
+
+
+                <!-- AUTOMATION -->
+
+                <div class="feature-item">
+
+                    <div class="feature-icon">
+                        ◈
+                    </div>
+
+                    <h3>
+                        Smart Automation
+                    </h3>
+
+                    <p>
+                        Get intelligent study suggestions and alerts
+                        based on your academic activity.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ========================= -->
+        <!-- FINAL CTA -->
+        <!-- ========================= -->
+
+        <section class="cta-section">
+
+            <div class="cta-content">
+
+                <span class="section-label">
+                    START YOUR JOURNEY
+                </span>
+
+                <h2>
+                    Make your study time
+                    <span>more productive.</span>
+                </h2>
+
+                <p>
+                    Bring your academic tasks, learning and progress
+                    together with StudyGenie.
+                </p>
+
+                <a href="{{ url_for('main.register') }}" class="btn btn-primary">
+                    Get Started
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ========================= -->
+    <!-- FOOTER -->
+    <!-- ========================= -->
+
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <div class="footer-brand">
+
+                <div class="brand">
+                    <span class="brand-icon">S</span>
+                    <span>StudyGenie</span>
+                </div>
+
+                <p>
+                    Your AI-powered student assistant.
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <a href="#features">
+                    Features
+                </a>
+
+                <a href="{{ url_for('main.login') }}">
+                    Login
+                </a>
+
+                <a href="{{ url_for('main.register') }}">
+                    Register
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 StudyGenie. Built for students.
+            </p>
+
+        </div>
+
+    </footer>
 
 </body>
+
 </html>

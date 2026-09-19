@@ -18,118 +18,284 @@
 
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <header>
 
-        <h1>StudyGenie</h1>
+    <!-- Navbar -->
 
-        <div>
+    <nav class="app-navbar">
+
+        <a href="{{ url_for('main.dashboard') }}"
+           class="app-brand">
+
+            <div class="brand-mark">
+                S
+            </div>
+
+            <div>
+
+                <div class="brand-name">
+                    StudyGenie
+                </div>
+
+                <div class="brand-subtitle">
+                    Student Assistant
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <div class="nav-links">
 
             <a href="{{ url_for('main.dashboard') }}">
                 Dashboard
             </a>
 
-            &nbsp; | &nbsp;
-
-            <a href="{{ url_for('main.notes') }}">
-                My Notes
+            <a href="{{ url_for('main.tasks') }}">
+                Tasks
             </a>
 
-            &nbsp; | &nbsp;
+            <a href="{{ url_for('main.quiz') }}">
+                Quiz
+            </a>
 
-            <a href="{{ url_for('main.logout') }}">
+            <a href="{{ url_for('main.notes') }}"
+               class="active">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}"
+               class="nav-logout">
                 Logout
             </a>
 
         </div>
 
-    </header>
+    </nav>
 
 
-    <main>
+    <!-- Main -->
 
-        <h2>📖 {{ note.title }}</h2>
+    <main class="page-container">
 
-        <p>
-            {{ note.filename }}
-        </p>
+        <div class="view-note-page">
 
 
-        <!-- ASK AI -->
+            <!-- Note Header -->
 
-        <div class="feature-card">
+            <div class="page-header">
 
-            <h3>🤖 Ask AI About These Notes</h3>
+                <div>
 
-            <form
-                method="POST"
-                action="{{ url_for('main.ask_note_question', note_id=note.id) }}"
-            >
+                    <span class="page-eyebrow">
+                        STUDY NOTES
+                    </span>
 
-                <textarea
-                    name="question"
-                    rows="5"
-                    placeholder="Example: Explain normalization from these notes..."
-                    required
-                >{{ question }}</textarea>
+                    <h1>
+                        {{ note.title }}
+                    </h1>
 
-                <br><br>
+                    <p>
+                        {{ note.filename }}
+                    </p>
 
-                <button type="submit">
-                    Ask StudyGenie
-                </button>
+                </div>
 
-            </form>
+                <a href="{{ url_for('main.notes') }}"
+                   class="secondary-button">
+                    ← My Notes
+                </a>
 
-        </div>
-
-
-        {% if error %}
-
-        <div class="feature-card">
-
-            <h3>Something went wrong</h3>
-
-            <p>{{ error }}</p>
-
-        </div>
-
-        {% endif %}
-
-
-        {% if answer %}
-
-        <div class="feature-card">
-
-            <h3>🤖 StudyGenie's Answer</h3>
-
-            <div style="white-space: pre-wrap;">
-                {{ answer }}
             </div>
 
-        </div>
 
-        {% endif %}
+            <!-- Ask AI -->
+
+            <div class="note-ai-card">
 
 
-        <!-- NOTE CONTENT -->
+                <div class="assistant-card-header">
 
-        <div class="feature-card">
+                    <div class="assistant-avatar">
+                        ✦
+                    </div>
 
-            <h3>📄 Extracted Notes</h3>
+                    <div>
 
-            <div style="
-                white-space: pre-wrap;
-                max-height: 600px;
-                overflow-y: auto;
-            ">
-                {{ note.content }}
+                        <h2>
+                            Ask AI About These Notes
+                        </h2>
+
+                        <p>
+                            Ask questions and get explanations
+                            based on your uploaded study material.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for('main.ask_note_question', note_id=note.id) }}"
+                    class="note-ai-form"
+                >
+
+                    <div class="form-group">
+
+                        <label for="question">
+                            Your Question
+                        </label>
+
+                        <textarea
+                            id="question"
+                            name="question"
+                            rows="5"
+                            placeholder="Example: Explain normalization from these notes..."
+                            required
+                        >{{ question }}</textarea>
+
+                    </div>
+
+
+                    <div class="assistant-form-footer">
+
+                        <span class="assistant-hint">
+                            Ask questions directly from the uploaded material.
+                        </span>
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                        >
+                            Ask StudyGenie
+                        </button>
+
+                    </div>
+
+                </form>
+
             </div>
+
+
+            <!-- Error -->
+
+            {% if error %}
+
+            <div class="assistant-error">
+
+                <div class="error-icon">
+                    !
+                </div>
+
+                <div>
+
+                    <h3>
+                        Something went wrong
+                    </h3>
+
+                    <p>
+                        {{ error }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- AI Answer -->
+
+            {% if answer %}
+
+            <div class="assistant-answer-card">
+
+                <div class="answer-header">
+
+                    <div class="answer-avatar">
+                        ✦
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            StudyGenie's Answer
+                        </h2>
+
+                        <span>
+                            AI Note Assistant
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="answer-content">
+
+                    {{ answer }}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Extracted Notes -->
+
+            <div class="extracted-notes-card">
+
+                <div class="extracted-notes-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            SOURCE MATERIAL
+                        </span>
+
+                        <h2>
+                            Extracted Notes
+                        </h2>
+
+                    </div>
+
+                    <span class="note-file-label">
+                        PDF
+                    </span>
+
+                </div>
+
+
+                <div class="note-content-viewer">
+
+                    {{ note.content }}
+
+                </div>
+
+            </div>
+
 
         </div>
 
     </main>
+
+
+    <footer class="app-footer">
+
+        <p>
+            StudyGenie · Your AI-powered student assistant
+        </p>
+
+    </footer>
 
 </div>
 

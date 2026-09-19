@@ -1,207 +1,764 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Student Progress - StudyGenie</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/style.css') }}"
-    >
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
+
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <header>
 
-        <h1>StudyGenie</h1>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
-        <div>
+    <nav class="app-navbar">
+
+        <a href="{{ url_for('main.dashboard') }}"
+           class="app-brand">
+
+            <div class="brand-mark">
+                S
+            </div>
+
+            <div>
+
+                <div class="brand-name">
+                    StudyGenie
+                </div>
+
+                <div class="brand-subtitle">
+                    Student Assistant
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <div class="nav-links">
 
             <a href="{{ url_for('main.dashboard') }}">
                 Dashboard
             </a>
 
-            &nbsp; | &nbsp;
+            <a href="{{ url_for('main.tasks') }}">
+                Tasks
+            </a>
 
-            <a href="{{ url_for('main.logout') }}">
+            <a href="{{ url_for('main.quiz') }}">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}"
+               class="nav-logout">
                 Logout
             </a>
 
         </div>
 
-    </header>
+    </nav>
 
 
-    <main>
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
 
-        <h2>📊 Student Progress</h2>
+    <main class="page-container">
 
-        <p>
-            Track your tasks and quiz performance in one place.
-        </p>
-
-
-        <!-- TASK STATISTICS -->
-
-        <div class="feature-card">
-
-            <h3>📋 Task Progress</h3>
-
-            <p>
-                <strong>Total Tasks:</strong>
-                {{ total_tasks }}
-            </p>
-
-            <p>
-                <strong>Completed:</strong>
-                {{ completed_tasks }}
-            </p>
-
-            <p>
-                <strong>Pending:</strong>
-                {{ pending_tasks }}
-            </p>
-
-        </div>
+        <div class="progress-page">
 
 
-        <!-- QUIZ STATISTICS -->
+            <!-- PAGE HEADER -->
 
-        <div class="feature-card">
+            <div class="page-header">
 
-            <h3>📝 Quiz Performance</h3>
+                <div>
 
-            <p>
-                <strong>Quizzes Taken:</strong>
-                {{ quizzes_taken }}
-            </p>
+                    <span class="page-eyebrow">
+                        ACADEMIC ANALYTICS
+                    </span>
 
-            <p>
-                <strong>Average Score:</strong>
-                {{ average_score }}%
-            </p>
-
-        </div>
-
-
-        <!-- TOPIC PERFORMANCE -->
-
-        <div class="feature-card">
-
-            <h3>📚 Topic-wise Performance</h3>
-
-            {% if topic_performance %}
-
-                {% for topic in topic_performance %}
-
-                <div style="margin-bottom: 15px;">
+                    <h1>
+                        Student Progress
+                    </h1>
 
                     <p>
-
-                        <strong>
-                            {{ topic.topic }}
-                        </strong>
-
-                        —
-
-                        {{ topic.average_score }}%
-
-                        <br>
-
-                        <small>
-                            Attempts: {{ topic.attempts }}
-                        </small>
-
+                        Track your academic progress, task completion,
+                        and quiz performance.
                     </p>
 
                 </div>
 
-                {% endfor %}
 
-            {% else %}
+                <a href="{{ url_for('main.dashboard') }}"
+                   class="secondary-button">
+                    ← Dashboard
+                </a>
 
-                <p>
-                    No completed quizzes available yet.
-                </p>
-
-            {% endif %}
-
-        </div>
+            </div>
 
 
-        <!-- RECENT QUIZZES -->
+            <!-- =========================
+                 SUMMARY STATS
+            ========================== -->
 
-        <div class="feature-card">
+            <div class="progress-stats-grid">
 
-            <h3>📈 Recent Quiz Performance</h3>
 
-            {% if recent_quizzes %}
+                <div class="progress-stat-card">
 
-                {% for quiz in recent_quizzes %}
+                    <span class="progress-stat-label">
+                        Total Tasks
+                    </span>
 
-                <p>
-
-                    <strong>
-                        {{ quiz.topic }}
+                    <strong class="progress-stat-value">
+                        {{ total_tasks }}
                     </strong>
 
-                    —
+                    <span class="progress-stat-description">
+                        Academic tasks created
+                    </span>
 
-                    {{ quiz.score }}/{{ quiz.total_questions }}
+                </div>
 
-                    {% if quiz.total_questions > 0 %}
 
-                        (
-                        {{
-                            ((quiz.score / quiz.total_questions) * 100)
-                            | round(1)
-                        }}%
-                        )
+                <div class="progress-stat-card">
+
+                    <span class="progress-stat-label">
+                        Completed Tasks
+                    </span>
+
+                    <strong class="progress-stat-value">
+                        {{ completed_tasks }}
+                    </strong>
+
+                    <span class="progress-stat-description">
+                        Tasks completed
+                    </span>
+
+                </div>
+
+
+                <div class="progress-stat-card">
+
+                    <span class="progress-stat-label">
+                        Pending Tasks
+                    </span>
+
+                    <strong class="progress-stat-value">
+                        {{ pending_tasks }}
+                    </strong>
+
+                    <span class="progress-stat-description">
+                        Tasks still pending
+                    </span>
+
+                </div>
+
+
+                <div class="progress-stat-card">
+
+                    <span class="progress-stat-label">
+                        Average Quiz Score
+                    </span>
+
+                    <strong class="progress-stat-value">
+                        {{ average_score }}%
+                    </strong>
+
+                    <span class="progress-stat-description">
+                        Across {{ quizzes_taken }} quiz{{ 'zes' if quizzes_taken != 1 else '' }}
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =========================
+                 TASK PROGRESS
+            ========================== -->
+
+            <div class="progress-section-card">
+
+                <div class="progress-section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            PRODUCTIVITY
+                        </span>
+
+                        <h2>
+                            Task Progress
+                        </h2>
+
+                        <p>
+                            See how much of your academic workload
+                            has been completed.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="progress-chart-container task-progress-chart">
+
+                    <canvas id="taskChart"></canvas>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 QUIZ PERFORMANCE
+            ========================== -->
+
+            <div class="progress-section-card">
+
+                <div class="progress-section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            LEARNING PERFORMANCE
+                        </span>
+
+                        <h2>
+                            Quiz Performance
+                        </h2>
+
+                        <p>
+                            Compare your average performance across
+                            different quiz topics.
+                        </p>
+
+                    </div>
+
+
+                    <div class="progress-mini-stat">
+
+                        <span>
+                            Quizzes Taken
+                        </span>
+
+                        <strong>
+                            {{ quizzes_taken }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="progress-chart-container quiz-progress-chart">
+
+                    {% if topic_performance %}
+
+                    <canvas id="quizChart"></canvas>
+
+                    {% else %}
+
+                    <div class="progress-empty-chart">
+
+                        <div class="empty-icon">
+                            —
+                        </div>
+
+                        <h3>
+                            No quiz data yet
+                        </h3>
+
+                        <p>
+                            Complete a quiz to start seeing
+                            your topic performance here.
+                        </p>
+
+                        <a href="{{ url_for('main.quiz') }}"
+                           class="primary-button">
+                            Take a Quiz
+                        </a>
+
+                    </div>
 
                     {% endif %}
 
-                </p>
+                </div>
 
-                {% endfor %}
+            </div>
 
-            {% else %}
 
-                <p>
-                    No quiz results available yet.
-                </p>
+            <!-- =========================
+                 TOPIC PERFORMANCE
+            ========================== -->
 
-            {% endif %}
+            <div class="progress-section-card">
+
+                <div class="progress-section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            SUBJECT ANALYSIS
+                        </span>
+
+                        <h2>
+                            Topic-wise Performance
+                        </h2>
+
+                        <p>
+                            Review your quiz attempts and average
+                            score for each topic.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if topic_performance %}
+
+                <div class="topic-table-wrapper">
+
+                    <table class="topic-performance-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Topic
+                                </th>
+
+                                <th>
+                                    Attempts
+                                </th>
+
+                                <th>
+                                    Average Score
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for topic in topic_performance %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="topic-name">
+                                        {{ topic.topic }}
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="attempt-badge">
+                                        {{ topic.attempts }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="topic-score">
+
+                                        <div class="topic-score-bar">
+
+                                            <span style="--score-width: {{ topic.average_score }}%; width: var(--score-width);"></span>
+
+                                        </div>
+
+                                        <strong>
+                                            {{ topic.average_score }}%
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="progress-empty-state">
+
+                    <div class="empty-icon">
+                        —
+                    </div>
+
+                    <h3>
+                        No topic data available
+                    </h3>
+
+                    <p>
+                        Complete some quizzes to see your
+                        topic-wise performance.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =========================
+                 RECENT QUIZZES
+            ========================== -->
+
+            <div class="progress-section-card">
+
+                <div class="progress-section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            RECENT ACTIVITY
+                        </span>
+
+                        <h2>
+                            Recent Quiz Performance
+                        </h2>
+
+                        <p>
+                            Review your latest quiz results.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if recent_quizzes %}
+
+                <div class="recent-quiz-list">
+
+                    {% for quiz in recent_quizzes %}
+
+                    <div class="recent-quiz-item">
+
+                        <div class="recent-quiz-info">
+
+                            <h3>
+                                {{ quiz.topic }}
+                            </h3>
+
+                            <span>
+                                {{ quiz.created_at }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="recent-quiz-score">
+
+                            <strong>
+                                {{ quiz.score }}/{{ quiz.total_questions }}
+                            </strong>
+
+                            {% if quiz.total_questions and quiz.total_questions > 0 %}
+
+                            <span>
+                                {{ ((quiz.score / quiz.total_questions) * 100) | round(1) }}%
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="progress-empty-state">
+
+                    <div class="empty-icon">
+                        —
+                    </div>
+
+                    <h3>
+                        No completed quizzes
+                    </h3>
+
+                    <p>
+                        You haven't completed any quizzes yet.
+                    </p>
+
+                    <a href="{{ url_for('main.quiz') }}"
+                       class="primary-button">
+                        Start a Quiz
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
 
         </div>
 
-
-        <br>
-
-
-        <a href="{{ url_for('main.dashboard') }}">
-
-            <button type="button">
-                Back to Dashboard
-            </button>
-
-        </a>
-
     </main>
 
+
+    <!-- FOOTER -->
+
+    <footer class="app-footer">
+
+        <p>
+            StudyGenie · Your AI-powered student assistant
+        </p>
+
+    </footer>
+
+
 </div>
+
+
+<!-- =========================
+     CHART JAVASCRIPT
+========================== -->
+
+<script>
+
+    /* =========================
+       TASK PROGRESS CHART
+    ========================== */
+
+    const taskChartElement =
+        document.getElementById("taskChart");
+
+    const completedTasks =
+        Number("{{ completed_tasks }}");
+
+    const pendingTasks =
+        Number("{{ pending_tasks }}");
+
+
+    if (taskChartElement) {
+
+        new Chart(taskChartElement, {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+                    "Completed",
+                    "Pending"
+                ],
+
+                datasets: [
+
+                    {
+
+                        data: [
+                            completedTasks,
+                            pendingTasks
+                        ]
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                cutout: "68%",
+
+                plugins: {
+
+                    legend: {
+
+                        position: "bottom",
+
+                        labels: {
+
+                            padding: 18
+
+                        }
+
+                    },
+
+                    title: {
+
+                        display: true,
+
+                        text: "Task Completion"
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+
+    /* =========================
+       QUIZ TOPIC PERFORMANCE
+    ========================== */
+
+    const quizChartElement =
+        document.getElementById("quizChart");
+
+
+    const quizTopics =
+        JSON.parse(
+            '{{ topic_performance | map(attribute="topic") | list | tojson }}'
+        );
+
+
+    const quizScores =
+        JSON.parse(
+            '{{ topic_performance | map(attribute="average_score") | list | tojson }}'
+        );
+
+
+    if (quizChartElement) {
+
+        new Chart(quizChartElement, {
+
+            type: "bar",
+
+            data: {
+
+                labels: quizTopics,
+
+                datasets: [
+
+                    {
+
+                        label: "Average Score (%)",
+
+                        data: quizScores
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        max: 100,
+
+                        title: {
+
+                            display: true,
+
+                            text: "Score (%)"
+
+                        }
+
+                    },
+
+                    x: {
+
+                        title: {
+
+                            display: true,
+
+                            text: "Quiz Topic"
+
+                        }
+
+                    }
+
+                },
+
+                plugins: {
+
+                    legend: {
+
+                        display: false
+
+                    },
+
+                    title: {
+
+                        display: true,
+
+                        text: "Average Score by Topic"
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+</script>
+
 
 </body>
 

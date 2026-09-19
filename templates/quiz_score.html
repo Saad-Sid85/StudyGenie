@@ -4,7 +4,6 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
@@ -17,42 +16,112 @@
 
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <div class="feature-card">
+    <!-- Navbar -->
+    <nav class="app-navbar">
 
-        <h1>Quiz Completed! 🎉</h1>
+        <a href="{{ url_for('main.dashboard') }}" class="app-brand">
 
-        <h2>{{ topic }}</h2>
+            <div class="brand-mark">S</div>
 
-        <h3>
-            Your Score
-        </h3>
+            <div>
+                <div class="brand-name">StudyGenie</div>
+                <div class="brand-subtitle">Student Assistant</div>
+            </div>
 
-        <p style="font-size: 32px;">
-            <strong>{{ score }} / {{ total }}</strong>
-        </p>
-
-        <p>
-            You answered {{ score }} out of {{ total }}
-            questions correctly.
-        </p>
-
-        <br>
-
-        <a href="{{ url_for('main.quiz') }}">
-            <button type="button">
-                Take Another Quiz
-            </button>
         </a>
 
-        <br><br>
 
-        <a href="{{ url_for('main.dashboard') }}">
-            Back to Dashboard
-        </a>
+        <div class="nav-links">
 
-    </div>
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('main.tasks') }}">
+                Tasks
+            </a>
+
+            <a href="{{ url_for('main.quiz') }}" class="active">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}" class="nav-logout">
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Result -->
+    <main class="page-container">
+
+        <div class="quiz-score-page">
+
+            <div class="score-card">
+
+                <div class="score-success-icon">
+                    ✓
+                </div>
+
+                <span class="page-eyebrow">
+                    QUIZ COMPLETED
+                </span>
+
+                <h1>{{ topic }}</h1>
+
+                <p class="score-label">
+                    Your Score
+                </p>
+
+                <div class="score-value">
+                    {{ score }} <span>/ {{ total }}</span>
+                </div>
+
+                <p class="score-message">
+                    You answered
+                    <strong>{{ score }}</strong>
+                    out of
+                    <strong>{{ total }}</strong>
+                    questions correctly.
+                </p>
+
+
+                <div class="score-actions">
+
+                    <a href="{{ url_for('main.quiz') }}"
+                       class="primary-button">
+                        Take Another Quiz
+                    </a>
+
+                    <a href="{{ url_for('main.dashboard') }}"
+                       class="secondary-button">
+                        Back to Dashboard
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <footer class="app-footer">
+        <p>StudyGenie · Your AI-powered student assistant</p>
+    </footer>
 
 </div>
 

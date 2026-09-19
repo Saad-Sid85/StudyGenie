@@ -2,142 +2,210 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Quiz - StudyGenie</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
 
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <header>
+    <!-- Navbar -->
+    <nav class="app-navbar">
 
-        <h1>StudyGenie</h1>
+        <a href="{{ url_for('main.dashboard') }}" class="app-brand">
 
-        <div>
+            <div class="brand-mark">S</div>
+
+            <div>
+                <div class="brand-name">StudyGenie</div>
+                <div class="brand-subtitle">Student Assistant</div>
+            </div>
+
+        </a>
+
+        <div class="nav-links">
 
             <a href="{{ url_for('main.dashboard') }}">
                 Dashboard
             </a>
 
-            &nbsp; | &nbsp;
+            <a href="{{ url_for('main.tasks') }}">
+                Tasks
+            </a>
 
-            <a href="{{ url_for('main.logout') }}">
+            <a href="{{ url_for('main.quiz') }}" class="active">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}" class="nav-logout">
                 Logout
             </a>
 
         </div>
 
-    </header>
+    </nav>
 
 
-    <main>
+    <!-- Quiz -->
+    <main class="page-container">
 
-        <h2>Quiz: {{ topic }}</h2>
+        <div class="quiz-page">
 
-        <form method="POST"
-              action="{{ url_for('main.submit_quiz') }}">
+            <div class="quiz-header">
 
-            <!-- IMPORTANT: Quiz ID -->
-            <input type="hidden"
-                   name="quiz_id"
-                   value="{{ quiz_id }}">
+                <span class="page-eyebrow">
+                    AI QUIZ
+                </span>
 
+                <h1>{{ topic }}</h1>
 
-            {% for question in questions %}
-
-            <div class="feature-card">
-
-                <h3>
-                    {{ loop.index }}. {{ question.question }}
-                </h3>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="question_{{ question.id }}"
-                        value="A"
-                        required
-                    >
-
-                    A. {{ question.option_a }}
-
-                </label>
-
-
-                <br><br>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="question_{{ question.id }}"
-                        value="B"
-                    >
-
-                    B. {{ question.option_b }}
-
-                </label>
-
-
-                <br><br>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="question_{{ question.id }}"
-                        value="C"
-                    >
-
-                    C. {{ question.option_c }}
-
-                </label>
-
-
-                <br><br>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="question_{{ question.id }}"
-                        value="D"
-                    >
-
-                    D. {{ question.option_d }}
-
-                </label>
+                <p>
+                    Choose the correct answer for each question.
+                </p>
 
             </div>
 
-            {% endfor %}
+
+            <form method="POST"
+                  action="{{ url_for('main.submit_quiz') }}"
+                  class="quiz-form">
+
+                <!-- IMPORTANT: Quiz ID -->
+                <input type="hidden"
+                       name="quiz_id"
+                       value="{{ quiz_id }}">
 
 
-            <button type="submit">
-                Submit Quiz
-            </button>
+                {% for question in questions %}
 
-        </form>
+                <div class="question-card">
+
+                    <div class="question-number">
+                        Question {{ loop.index }}
+                    </div>
+
+                    <h2>
+                        {{ question.question }}
+                    </h2>
+
+
+                    <div class="quiz-options">
+
+                        <label class="quiz-option">
+
+                            <input
+                                type="radio"
+                                name="question_{{ question.id }}"
+                                value="A"
+                                required
+                            >
+
+                            <span class="option-letter">A</span>
+
+                            <span class="option-text">
+                                {{ question.option_a }}
+                            </span>
+
+                        </label>
+
+
+                        <label class="quiz-option">
+
+                            <input
+                                type="radio"
+                                name="question_{{ question.id }}"
+                                value="B"
+                            >
+
+                            <span class="option-letter">B</span>
+
+                            <span class="option-text">
+                                {{ question.option_b }}
+                            </span>
+
+                        </label>
+
+
+                        <label class="quiz-option">
+
+                            <input
+                                type="radio"
+                                name="question_{{ question.id }}"
+                                value="C"
+                            >
+
+                            <span class="option-letter">C</span>
+
+                            <span class="option-text">
+                                {{ question.option_c }}
+                            </span>
+
+                        </label>
+
+
+                        <label class="quiz-option">
+
+                            <input
+                                type="radio"
+                                name="question_{{ question.id }}"
+                                value="D"
+                            >
+
+                            <span class="option-letter">D</span>
+
+                            <span class="option-text">
+                                {{ question.option_d }}
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+
+                <div class="quiz-submit-area">
+
+                    <button type="submit"
+                            class="primary-button quiz-submit-button">
+                        Submit Quiz
+                    </button>
+
+                    <a href="{{ url_for('main.quiz') }}"
+                       class="secondary-button">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </main>
+
+
+    <footer class="app-footer">
+        <p>StudyGenie · Your AI-powered student assistant</p>
+    </footer>
 
 </div>
 
 </body>
-
 </html>

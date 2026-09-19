@@ -2,126 +2,215 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>AI Assistant - StudyGenie</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
-
 
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <!-- HEADER -->
+    <!-- Navbar -->
+    <nav class="app-navbar">
 
-    <header>
+        <a href="{{ url_for('main.dashboard') }}" class="app-brand">
 
-        <h1>StudyGenie</h1>
+            <div class="brand-mark">S</div>
 
-        <div>
+            <div>
+                <div class="brand-name">StudyGenie</div>
+                <div class="brand-subtitle">Student Assistant</div>
+            </div>
+
+        </a>
+
+
+        <div class="nav-links">
 
             <a href="{{ url_for('main.dashboard') }}">
                 Dashboard
             </a>
 
-            &nbsp; | &nbsp;
+            <a href="{{ url_for('main.tasks') }}">
+                Tasks
+            </a>
 
-            <a href="{{ url_for('main.logout') }}">
+            <a href="{{ url_for('main.quiz') }}">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}" class="active">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}" class="nav-logout">
                 Logout
             </a>
 
         </div>
 
-    </header>
+    </nav>
 
 
-    <!-- MAIN CONTENT -->
+    <!-- Main Content -->
+    <main class="page-container">
 
-    <main>
+        <div class="assistant-page">
 
-        <h2>🤖 AI Student Assistant</h2>
+            <!-- Header -->
+            <div class="page-header">
 
-        <p>
-            Ask StudyGenie anything about your studies,
-            programming, assignments or exam preparation.
-        </p>
+                <div>
 
+                    <span class="page-eyebrow">
+                        AI LEARNING ASSISTANT
+                    </span>
 
-        <!-- QUESTION FORM -->
+                    <h1>StudyGenie AI Assistant</h1>
 
-        <div class="feature-card">
+                    <p>
+                        Ask questions about academics, programming,
+                        assignments or exam preparation.
+                    </p>
 
-            <form method="POST"
-                  action="{{ url_for('main.assistant') }}">
+                </div>
 
-                <label for="question">
-                    <strong>Your Question</strong>
-                </label>
-
-                <br><br>
-
-                <textarea
-                    id="question"
-                    name="question"
-                    rows="6"
-                    placeholder="Example: Explain normalization in DBMS with an example..."
-                    required
-                >{{ question }}</textarea>
-
-                <br><br>
-
-                <button type="submit">
-                    Ask StudyGenie
-                </button>
-
-            </form>
-
-        </div>
-
-
-        <!-- ERROR -->
-
-        {% if error %}
-
-        <div class="feature-card">
-
-            <h3>Something went wrong</h3>
-
-            <p>
-                {{ error }}
-            </p>
-
-        </div>
-
-        {% endif %}
-
-
-        <!-- AI ANSWER -->
-
-        {% if answer %}
-
-        <div class="feature-card">
-
-            <h3>🤖 StudyGenie's Answer</h3>
-
-            <div style="white-space: pre-wrap;">
-                {{ answer }}
             </div>
 
+
+            <!-- Question Card -->
+            <div class="assistant-card">
+
+                <div class="assistant-card-header">
+
+                    <div class="assistant-avatar">
+                        ✦
+                    </div>
+
+                    <div>
+                        <h2>Ask StudyGenie</h2>
+
+                        <p>
+                            Get clear and practical explanations
+                            for your studies.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <form method="POST"
+                      action="{{ url_for('main.assistant') }}"
+                      class="assistant-form">
+
+                    <div class="form-group">
+
+                        <label for="question">
+                            Your Question
+                        </label>
+
+                        <textarea
+                            id="question"
+                            name="question"
+                            rows="7"
+                            placeholder="Example: Explain normalization in DBMS with an example..."
+                            required
+                        >{{ question }}</textarea>
+
+                    </div>
+
+
+                    <div class="assistant-form-footer">
+
+                        <span class="assistant-hint">
+                            Tip: Be specific for a more useful answer.
+                        </span>
+
+                        <button type="submit"
+                                class="primary-button">
+                            Ask StudyGenie
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- Error -->
+            {% if error %}
+
+            <div class="assistant-error">
+
+                <div class="error-icon">
+                    !
+                </div>
+
+                <div>
+
+                    <h3>Something went wrong</h3>
+
+                    <p>
+                        {{ error }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- AI Answer -->
+            {% if answer %}
+
+            <div class="assistant-answer-card">
+
+                <div class="answer-header">
+
+                    <div class="answer-avatar">
+                        ✦
+                    </div>
+
+                    <div>
+
+                        <h2>StudyGenie's Answer</h2>
+
+                        <span>
+                            AI Academic Assistant
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="answer-content">
+                    {{ answer }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
         </div>
 
-        {% endif %}
-
-
     </main>
+
+
+    <footer class="app-footer">
+        <p>StudyGenie · Your AI-powered student assistant</p>
+    </footer>
 
 </div>
 

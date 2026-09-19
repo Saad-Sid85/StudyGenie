@@ -13,79 +13,162 @@
 
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <header>
-        <h1>StudyGenie</h1>
+    <!-- Navbar -->
+    <nav class="app-navbar">
 
-        <div>
+        <a href="{{ url_for('main.dashboard') }}" class="app-brand">
+
+            <div class="brand-mark">S</div>
+
+            <div>
+                <div class="brand-name">StudyGenie</div>
+                <div class="brand-subtitle">Student Assistant</div>
+            </div>
+
+        </a>
+
+        <div class="nav-links">
+
             <a href="{{ url_for('main.dashboard') }}">
                 Dashboard
             </a>
 
-            &nbsp; | &nbsp;
+            <a href="{{ url_for('main.tasks') }}">
+                Tasks
+            </a>
 
-            <a href="{{ url_for('main.logout') }}">
+            <a href="{{ url_for('main.quiz') }}" class="active">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}" class="nav-logout">
                 Logout
             </a>
+
         </div>
-    </header>
+
+    </nav>
 
 
-    <main>
+    <!-- Main -->
+    <main class="page-container">
 
-        <div class="feature-card">
+        <div class="quiz-generator-page">
 
-            <h2>AI Quiz Generator</h2>
+            <div class="page-header">
 
-            <p>
-                Enter a subject or topic and StudyGenie will generate
-                a quiz for you.
-            </p>
+                <div>
 
-            <form method="POST"
-      action="{{ url_for('main.generate_quiz_route') }}">
+                    <span class="page-eyebrow">
+                        AI LEARNING TOOL
+                    </span>
 
-                <label for="topic">
-                    Subject / Topic
-                </label>
+                    <h1>Quiz Generator</h1>
 
-                <input
-                    type="text"
-                    id="topic"
-                    name="topic"
-                    placeholder="e.g. Data Structures"
-                    required
-                >
+                    <p>
+                        Test your knowledge with an AI-generated quiz
+                        based on any academic topic.
+                    </p>
 
-                <br><br>
+                </div>
 
-                <label for="num_questions">
-                    Number of Questions
-                </label>
+            </div>
 
-                <select id="num_questions"
-                        name="num_questions">
 
-                    <option value="5">5 Questions</option>
-                    <option value="10">10 Questions</option>
+            <div class="quiz-generator-card">
 
-                </select>
+                <div class="quiz-icon">
+                    ✦
+                </div>
 
-                <br><br>
+                <h2>Generate an AI Quiz</h2>
 
-                <button type="submit">
-                    Generate Quiz
-                </button>
+                <p class="quiz-generator-description">
+                    Enter a subject or topic and StudyGenie will
+                    create multiple-choice questions for you.
+                </p>
 
-            </form>
+
+                <form method="POST"
+                      action="{{ url_for('main.generate_quiz_route') }}"
+                      class="quiz-generator-form">
+
+
+                    <div class="form-group">
+
+                        <label for="topic">
+                            Subject / Topic
+                        </label>
+
+                        <input
+                            type="text"
+                            id="topic"
+                            name="topic"
+                            placeholder="e.g. Data Structures"
+                            required
+                        >
+
+                        <span class="input-help">
+                            Try topics such as DBMS, Python, Operating Systems,
+                            Computer Networks, or Data Structures.
+                        </span>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="num_questions">
+                            Number of Questions
+                        </label>
+
+                        <select
+                            id="num_questions"
+                            name="num_questions"
+                        >
+
+                            <option value="5">
+                                5 Questions
+                            </option>
+
+                            <option value="10">
+                                10 Questions
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button type="submit"
+                            class="primary-button quiz-generate-button">
+                        Generate Quiz
+                    </button>
+
+                </form>
+
+            </div>
 
         </div>
 
     </main>
 
+
+    <footer class="app-footer">
+        <p>StudyGenie · Your AI-powered student assistant</p>
+    </footer>
+
 </div>
 
 </body>
-
 </html>

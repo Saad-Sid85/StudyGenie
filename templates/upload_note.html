@@ -18,100 +18,255 @@
 
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <header>
 
-        <h1>StudyGenie</h1>
+    <!-- Navbar -->
 
-        <div>
+    <nav class="app-navbar">
+
+        <a href="{{ url_for('main.dashboard') }}"
+           class="app-brand">
+
+            <div class="brand-mark">
+                S
+            </div>
+
+            <div>
+
+                <div class="brand-name">
+                    StudyGenie
+                </div>
+
+                <div class="brand-subtitle">
+                    Student Assistant
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <div class="nav-links">
 
             <a href="{{ url_for('main.dashboard') }}">
                 Dashboard
             </a>
 
-            &nbsp; | &nbsp;
+            <a href="{{ url_for('main.tasks') }}">
+                Tasks
+            </a>
 
-            <a href="{{ url_for('main.notes') }}">
+            <a href="{{ url_for('main.quiz') }}">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}"
+               class="active">
                 Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}"
+               class="nav-logout">
+                Logout
             </a>
 
         </div>
 
-    </header>
+    </nav>
 
 
-    <main>
+    <!-- Main -->
 
-        <h2>📄 Upload Study Notes</h2>
+    <main class="page-container">
 
-        <p>
-            Upload a PDF containing your study material.
-        </p>
+        <div class="form-page">
 
 
-        {% if error %}
+            <div class="page-header">
 
-        <div class="feature-card">
+                <div>
 
-            <h3>Something went wrong</h3>
+                    <span class="page-eyebrow">
+                        STUDY MATERIAL
+                    </span>
 
-            <p>{{ error }}</p>
+                    <h1>Upload Study Notes</h1>
 
-        </div>
+                    <p>
+                        Upload a PDF containing your study material
+                        and use StudyGenie AI to study from it.
+                    </p>
 
-        {% endif %}
+                </div>
 
-
-        <div class="feature-card">
-
-            <form
-                method="POST"
-                enctype="multipart/form-data"
-            >
-
-                <label for="title">
-                    <strong>Note Title</strong>
-                </label>
-
-                <br><br>
-
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    placeholder="Example: DBMS Unit 1"
-                    required
-                >
-
-                <br><br>
+            </div>
 
 
-                <label for="pdf_file">
-                    <strong>Select PDF</strong>
-                </label>
+            {% if error %}
 
-                <br><br>
+            <div class="assistant-error note-upload-error">
 
-                <input
-                    type="file"
-                    id="pdf_file"
-                    name="pdf_file"
-                    accept=".pdf"
-                    required
-                >
+                <div class="error-icon">
+                    !
+                </div>
 
-                <br><br>
+                <div>
 
-                <button type="submit">
-                    Upload PDF
-                </button>
+                    <h3>
+                        Something went wrong
+                    </h3>
 
-            </form>
+                    <p>
+                        {{ error }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <div class="note-upload-card">
+
+
+                <div class="note-upload-header">
+
+                    <div class="note-upload-icon">
+                        PDF
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Add a Study PDF
+                        </h2>
+
+                        <p>
+                            Give your notes a title and select
+                            the PDF you want to study.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form method="POST"
+                      enctype="multipart/form-data"
+                      class="note-upload-form">
+
+
+                    <div class="form-group">
+
+                        <label for="title">
+                            Note Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            placeholder="Example: DBMS Unit 1"
+                            required
+                        >
+
+                        <span class="input-help">
+                            Use a clear title so you can easily
+                            find these notes later.
+                        </span>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="pdf_file">
+                            Select PDF
+                        </label>
+
+                        <div class="file-upload-box">
+
+                            <input
+                                type="file"
+                                id="pdf_file"
+                                name="pdf_file"
+                                accept=".pdf"
+                                required
+                            >
+
+                            <div class="file-upload-content">
+
+                                <div class="file-upload-icon">
+                                    ↑
+                                </div>
+
+                                <strong>
+                                    Choose a PDF file
+                                </strong>
+
+                                <span>
+                                    PDF study material only
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="note-upload-info">
+
+                        <strong>
+                            What happens after upload?
+                        </strong>
+
+                        <p>
+                            StudyGenie extracts the text from your
+                            PDF so you can view the notes and ask
+                            the AI assistant questions about them.
+                        </p>
+
+                    </div>
+
+
+                    <div class="task-form-actions">
+
+                        <a href="{{ url_for('main.notes') }}"
+                           class="secondary-button">
+                            Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="primary-button">
+                            Upload PDF
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+            </div>
 
         </div>
 
     </main>
+
+
+    <footer class="app-footer">
+
+        <p>
+            StudyGenie · Your AI-powered student assistant
+        </p>
+
+    </footer>
 
 </div>
 

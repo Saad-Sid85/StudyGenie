@@ -13,103 +13,202 @@
 
 <body>
 
-<div class="dashboard-container">
+<div class="app-shell">
 
-    <header>
+    <!-- Navbar -->
+    <nav class="app-navbar">
 
-        <h1>StudyGenie</h1>
+        <a href="{{ url_for('main.dashboard') }}" class="app-brand">
+            <div class="brand-mark">S</div>
 
-        <div>
+            <div>
+                <div class="brand-name">StudyGenie</div>
+                <div class="brand-subtitle">Student Assistant</div>
+            </div>
+        </a>
+
+        <div class="nav-links">
+
             <a href="{{ url_for('main.dashboard') }}">
                 Dashboard
             </a>
 
-            &nbsp; | &nbsp;
+            <a href="{{ url_for('main.tasks') }}" class="active">
+                Tasks
+            </a>
 
-            <a href="{{ url_for('main.logout') }}">
+            <a href="{{ url_for('main.quiz') }}">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}" class="nav-logout">
                 Logout
             </a>
+
         </div>
 
-    </header>
+    </nav>
 
-    <main>
 
-        <h2>My Tasks</h2>
+    <!-- Main Content -->
+    <main class="page-container">
 
-        <p>
-            <a href="{{ url_for('main.add_task') }}">
-                <button>Add New Task</button>
+        <div class="page-header">
+
+            <div>
+                <span class="page-eyebrow">PRODUCTIVITY</span>
+
+                <h1>My Tasks</h1>
+
+                <p>
+                    Keep track of assignments, deadlines and study work.
+                </p>
+            </div>
+
+            <a href="{{ url_for('main.add_task') }}"
+               class="primary-button">
+                + Add New Task
             </a>
-        </p>
+
+        </div>
+
 
         {% if tasks %}
 
+        <div class="tasks-grid">
+
             {% for task in tasks %}
 
-            <div class="feature-card">
+            <div class="task-card">
 
-                <h3>{{ task.title }}</h3>
+                <div class="task-card-top">
 
-                <p>
-                    <strong>Subject:</strong>
-                    {{ task.subject or "Not specified" }}
+                    <div>
+
+                        <h3>{{ task.title }}</h3>
+
+                        <span class="task-subject">
+                            {{ task.subject or "General Study" }}
+                        </span>
+
+                    </div>
+
+
+                    <span class="priority-badge priority-{{ task.priority|lower }}">
+                        {{ task.priority }}
+                    </span>
+
+                </div>
+
+
+                <p class="task-description">
+                    {{ task.description or "No description provided." }}
                 </p>
 
-                <p>
-                    <strong>Description:</strong>
-                    {{ task.description or "No description" }}
-                </p>
 
-                <p>
-                    <strong>Due:</strong>
-                    {{ task.due_date }}
-                </p>
+                <div class="task-meta">
 
-                <p>
-                    <strong>Priority:</strong>
-                    {{ task.priority }}
-                </p>
+                    <div class="task-meta-item">
 
-                <p>
-                    <strong>Status:</strong>
-                    {{ task.status }}
-                </p>
+                        <span class="meta-label">
+                            Due date
+                        </span>
 
-                {% if task.status == "Pending" %}
+                        <strong>
+                            {{ task.due_date }}
+                        </strong>
 
-                    <a href="{{ url_for('main.complete_task', task_id=task.id) }}">
-                        Mark Complete
+                    </div>
+
+
+                    <div class="task-meta-item">
+
+                        <span class="meta-label">
+                            Status
+                        </span>
+
+                        <span class="status-badge status-{{ task.status|lower }}">
+                            {{ task.status }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="task-actions">
+
+                    {% if task.status == "Pending" %}
+
+                    <a href="{{ url_for('main.complete_task', task_id=task.id) }}"
+                       class="complete-button">
+                        ✓ Mark Complete
                     </a>
 
-                {% endif %}
+                    {% else %}
 
-                &nbsp; | &nbsp;
+                    <span class="completed-label">
+                        ✓ Completed
+                    </span>
 
-                <a href="{{ url_for('main.delete_task', task_id=task.id) }}">
-                    Delete
-                </a>
+                    {% endif %}
+
+
+                    <a href="{{ url_for('main.delete_task', task_id=task.id) }}"
+                       class="delete-button"
+                       onclick="return confirm('Delete this task?');">
+                        Delete
+                    </a>
+
+                </div>
 
             </div>
 
             {% endfor %}
 
+        </div>
+
+
         {% else %}
 
-            <div class="feature-card">
+        <div class="empty-state">
 
-                <p>
-                    No tasks yet. Add your first study task.
-                </p>
-
+            <div class="empty-icon">
+                ✓
             </div>
+
+            <h2>No tasks yet</h2>
+
+            <p>
+                Add your first study task and start keeping track
+                of your academic work.
+            </p>
+
+            <a href="{{ url_for('main.add_task') }}"
+               class="primary-button">
+                + Add Your First Task
+            </a>
+
+        </div>
 
         {% endif %}
 
     </main>
 
+
+    <footer class="app-footer">
+        <p>StudyGenie · Your AI-powered student assistant</p>
+    </footer>
+
 </div>
 
 </body>
-
 </html>

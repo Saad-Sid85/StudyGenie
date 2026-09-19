@@ -13,61 +13,208 @@
 
 <body>
 
-<div class="auth-container">
+<div class="app-shell">
 
-    <h1>StudyGenie</h1>
-    <h2>Add Task</h2>
+    <!-- Navbar -->
+    <nav class="app-navbar">
 
-    <form method="POST">
+        <a href="{{ url_for('main.dashboard') }}" class="app-brand">
 
-        <input
-            type="text"
-            name="title"
-            placeholder="Task Title"
-            required
-        >
+            <div class="brand-mark">S</div>
 
-        <textarea
-            name="description"
-            placeholder="Description"
-            rows="4"
-        ></textarea>
+            <div>
+                <div class="brand-name">StudyGenie</div>
+                <div class="brand-subtitle">Student Assistant</div>
+            </div>
 
-        <input
-            type="text"
-            name="subject"
-            placeholder="Subject"
-        >
-
-        <label>Due Date</label>
-
-        <input
-            type="date"
-            name="due_date"
-            required
-        >
-
-        <label>Priority</label>
-
-        <select name="priority">
-
-            <option value="Low">Low</option>
-            <option value="Medium" selected>Medium</option>
-            <option value="High">High</option>
-
-        </select>
-
-        <button type="submit">
-            Add Task
-        </button>
-
-    </form>
-
-    <p>
-        <a href="{{ url_for('main.tasks') }}">
-            Back to Tasks
         </a>
-    </p>
+
+
+        <div class="nav-links">
+
+            <a href="{{ url_for('main.dashboard') }}">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('main.tasks') }}" class="active">
+                Tasks
+            </a>
+
+            <a href="{{ url_for('main.quiz') }}">
+                Quiz
+            </a>
+
+            <a href="{{ url_for('main.notes') }}">
+                Notes
+            </a>
+
+            <a href="{{ url_for('main.assistant') }}">
+                AI Assistant
+            </a>
+
+            <a href="{{ url_for('main.logout') }}" class="nav-logout">
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Form -->
+    <main class="page-container">
+
+        <div class="form-page">
+
+            <div class="page-header">
+
+                <div>
+
+                    <span class="page-eyebrow">
+                        PRODUCTIVITY
+                    </span>
+
+                    <h1>Add New Task</h1>
+
+                    <p>
+                        Create a task to keep your study schedule organized.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="task-form-card">
+
+                <form method="POST"
+                      class="task-form">
+
+
+                    <div class="form-group">
+
+                        <label for="title">
+                            Task Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            placeholder="e.g. Complete DBMS assignment"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            placeholder="Add some details about this task..."
+                            rows="5"
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="subject">
+                            Subject
+                        </label>
+
+                        <input
+                            type="text"
+                            id="subject"
+                            name="subject"
+                            placeholder="e.g. DBMS"
+                        >
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="due_date">
+                                Due Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="due_date"
+                                name="due_date"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="priority">
+                                Priority
+                            </label>
+
+                            <select
+                                id="priority"
+                                name="priority"
+                            >
+
+                                <option value="Low">
+                                    Low
+                                </option>
+
+                                <option value="Medium" selected>
+                                    Medium
+                                </option>
+
+                                <option value="High">
+                                    High
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="task-form-actions">
+
+                        <a href="{{ url_for('main.tasks') }}"
+                           class="secondary-button">
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="primary-button">
+                            Add Task
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <footer class="app-footer">
+        <p>StudyGenie · Your AI-powered student assistant</p>
+    </footer>
 
 </div>
 
