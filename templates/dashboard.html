@@ -40,7 +40,168 @@
 
             </section>
 
+<!-- DASHBOARD STATISTICS -->
 
+<div class="dashboard-stats">
+
+    <div class="feature-card">
+        <h4>📋 Pending Tasks</h4>
+        <h2>{{ pending_tasks }}</h2>
+    </div>
+
+    <div class="feature-card">
+        <h4>⏰ Upcoming Deadlines</h4>
+        <h2>{{ upcoming_deadlines }}</h2>
+        <p>Next 7 days</p>
+    </div>
+
+    <div class="feature-card">
+        <h4>📝 Quizzes Taken</h4>
+        <h2>{{ quizzes_taken }}</h2>
+    </div>
+
+    <div class="feature-card">
+        <h4>📊 Average Quiz Score</h4>
+        <h2>{{ average_score }}%</h2>
+    </div>
+
+</div>
+
+<!-- AI RECOMMENDATION PREVIEW -->
+
+<div class="feature-card ai-recommendation-card">
+
+    <h3>🧠 StudyGenie Recommendation</h3>
+
+    <p>
+        {{ recommendation_preview }}
+    </p>
+
+    {% if recommendation_priorities %}
+
+        <h4>Today's Focus</h4>
+
+        <ul>
+
+            {% for priority in recommendation_priorities[:3] %}
+
+            <li>
+                {{ priority }}
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% endif %}
+
+    <br>
+
+    <a href="{{ url_for('main.recommendations') }}">
+        <button type="button">
+            View Full Recommendations
+        </button>
+    </a>
+
+</div>
+
+<!-- UPCOMING TASKS -->
+
+<div class="feature-card">
+
+    <h3>📅 Upcoming Tasks</h3>
+
+    {% if upcoming_tasks %}
+
+        <ul>
+
+            {% for task in upcoming_tasks %}
+
+            <li>
+
+                <strong>{{ task.title }}</strong>
+
+                {% if task.subject %}
+                    — {{ task.subject }}
+                {% endif %}
+
+                | Due: {{ task.due_date }}
+                | Priority: {{ task.priority }}
+
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p>
+            🎉 No pending tasks. You're all caught up!
+        </p>
+
+    {% endif %}
+
+    <br>
+
+    <a href="{{ url_for('main.tasks') }}">
+        <button type="button">View All Tasks</button>
+    </a>
+
+</div>
+
+<!-- RECENT QUIZ PERFORMANCE -->
+
+<div class="feature-card">
+
+    <h3>📝 Recent Quiz Performance</h3>
+
+    {% if recent_quizzes %}
+
+        <ul>
+
+            {% for quiz in recent_quizzes %}
+
+            <li>
+
+                <strong>{{ quiz.topic }}</strong>
+
+                —
+
+                {{ quiz.score }}/{{ quiz.total_questions }}
+
+                {% if quiz.total_questions > 0 %}
+
+                    (
+                    {{
+                        ((quiz.score / quiz.total_questions) * 100)
+                        | round(1)
+                    }}%
+                    )
+
+                {% endif %}
+
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p>
+            You haven't completed any quizzes yet.
+        </p>
+
+        <a href="{{ url_for('main.quiz') }}">
+            <button type="button">
+                Take Your First Quiz
+            </button>
+        </a>
+
+    {% endif %}
+
+</div>
             <!-- Main Features -->
 
             <section class="feature-section">
@@ -126,7 +287,6 @@
                         </a>
 
                     </div>
-
 
                 </div>
 

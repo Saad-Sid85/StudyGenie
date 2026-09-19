@@ -136,21 +136,193 @@ def dashboard():
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
 
-    query = """
-        SELECT name, email, college, course, branch, semester
-        FROM users
-        WHERE id = %s
-    """
+    try:
 
-    cursor.execute(query, (session["user_id"],))
-    user = cursor.fetchone()
+        # ----------------------------------------------------
+        # Student profile
+        # ----------------------------------------------------
 
-    cursor.close()
-    connection.close()
+        cursor.execute(
+            """
+            SELECT name, email, college, course, branch, semester
+            FROM users
+            WHERE id = %s
+            """,
+            (session["user_id"],)
+        )
+
+        user = cursor.fetchone()
+
+        # ----------------------------------------------------
+        # Pending task count
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS count
+            FROM tasks
+            WHERE user_id = %s
+              AND status = 'Pending'
+            """,
+            (session["user_id"],)
+        )
+
+        pending_tasks = cursor.fetchone()["count"]
+
+        # ----------------------------------------------------
+        # Upcoming tasks
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                title,
+                subject,
+                due_date,
+                priority,
+                status
+            FROM tasks
+            WHERE user_id = %s
+              AND status = 'Pending'
+            ORDER BY due_date ASC
+            LIMIT 5
+            """,
+            (session["user_id"],)
+        )
+
+        upcoming_tasks = cursor.fetchall()
+
+        # ----------------------------------------------------
+        # Upcoming deadline count
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS count
+            FROM tasks
+            WHERE user_id = %s
+              AND status = 'Pending'
+              AND due_date >= CURDATE()
+              AND due_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+            """,
+            (session["user_id"],)
+        )
+
+        upcoming_deadlines = cursor.fetchone()["count"]
+
+        # ----------------------------------------------------
+        # Total quizzes taken
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS count
+            FROM quizzes
+            WHERE user_id = %s
+              AND score IS NOT NULL
+            """,
+            (session["user_id"],)
+        )
+
+        quizzes_taken = cursor.fetchone()["count"]
+
+        # ----------------------------------------------------
+        # Average quiz score
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                COALESCE(
+                    ROUND(
+                        AVG(
+                            CASE
+                                WHEN total_questions > 0
+                                THEN (score / total_questions) * 100
+                            END
+                        ),
+                        1
+                    ),
+                    0
+                ) AS average_score
+            FROM quizzes
+            WHERE user_id = %s
+              AND score IS NOT NULL
+            """,
+            (session["user_id"],)
+        )
+
+        average_score = cursor.fetchone()["average_score"]
+
+        # ----------------------------------------------------
+        # Recent quiz performance
+        # ----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                topic,
+                score,
+                total_questions,
+                created_at
+            FROM quizzes
+            WHERE user_id = %s
+              AND score IS NOT NULL
+            ORDER BY created_at DESC
+            LIMIT 5
+            """,
+            (session["user_id"],)
+        )
+
+        recent_quizzes = cursor.fetchall()
+
+                # ----------------------------------------------------
+        # Generate AI recommendation preview
+        # ----------------------------------------------------
+
+        try:
+
+            recommendation_data = generate_recommendations(
+                user,
+                upcoming_tasks,
+                recent_quizzes
+            )
+
+            recommendation_preview = recommendation_data.get(
+                "summary",
+                "Keep working consistently and stay on top of your upcoming tasks."
+            )
+
+            recommendation_priorities = recommendation_data.get(
+                "priorities",
+                []
+            )
+
+        except Exception:
+
+            recommendation_preview = (
+                "Complete your pending tasks and review your recent quiz performance."
+            )
+
+            recommendation_priorities = []
+
+    finally:
+
+        cursor.close()
+        connection.close()
 
     return render_template(
         "dashboard.html",
-        user=user
+        user=user,
+        pending_tasks=pending_tasks,
+        upcoming_deadlines=upcoming_deadlines,
+        quizzes_taken=quizzes_taken,
+        average_score=average_score,
+        upcoming_tasks=upcoming_tasks,
+        recent_quizzes=recent_quizzes,
+        recommendation_preview=recommendation_preview,
+        recommendation_priorities=recommendation_priorities
     )
 
 
