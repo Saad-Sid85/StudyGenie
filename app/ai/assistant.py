@@ -8,7 +8,8 @@ load_dotenv()
 
 
 client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
+    api_key=os.getenv("GEMINI_API_KEY"),
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 )
 
 
@@ -46,9 +47,14 @@ Instructions:
 - Do not pretend to know information that was not provided.
 """
 
-    response = client.responses.create(
-        model="gpt-5.6-luna",
-        input=prompt
+    response = client.chat.completions.create(
+        model="gemini-3.6-flash",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
     )
 
-    return response.output_text
+    return response.choices[0].message.content

@@ -9,7 +9,8 @@ load_dotenv()
 
 
 client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
+    api_key=os.getenv("GEMINI_API_KEY"),
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 )
 
 
@@ -98,11 +99,16 @@ Rules:
 - Keep recommendations practical for a college student.
 """
 
-    response = client.responses.create(
-        model="gpt-5.6-luna",
-        input=prompt
+    response = client.chat.completions.create(
+        model="gemini-3.6-flash",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
     )
 
-    result = response.output_text
+    result = response.choices[0].message.content
 
     return json.loads(result)
